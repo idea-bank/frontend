@@ -1,18 +1,12 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
+import Feed from './feed'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
-    <>
-      <main>
-        <h2>
-          Welcome to Idea Bank Home Page!
-        </h2>
-      </main>
-    </>
+      <Feed></Feed>
   )
 }

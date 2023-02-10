@@ -1,0 +1,24 @@
+.feed {
+    height: 100vh;
+    overflow: auto;
+    scroll-snap-type: y mandatory; /* make each post snap to scroll */
+    margin: auto; /* center the feed horizontally */
+    max-width: 400px;
+
+}
+.feed::-webkit-scrollbar {
+    display: none;
+}
+.post {
+    scroll-snap-align: start;
+    height: 100%; /* stretch the post to the full height of the viewport */
+    width: 99%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #babeba;
+}
+
+.feed {
+    color : white;
+}
