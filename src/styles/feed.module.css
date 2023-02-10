@@ -12,11 +12,10 @@
 .post {
     scroll-snap-align: start;
     height: 100%; /* stretch the post to the full height of the viewport */
-    width: 99%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #babeba;
 }
 
 .feed {
