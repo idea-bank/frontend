@@ -3,8 +3,7 @@
     overflow: auto;
     scroll-snap-type: y mandatory; /* make each post snap to scroll */
     margin: auto; /* center the feed horizontally */
-    max-width: 400px;
-
+    max-width: 600px;
 }
 .feed::-webkit-scrollbar {
     display: none;
