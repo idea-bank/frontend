@@ -21,12 +21,12 @@ const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
 
 
   if(matches800){
-    return .9;
+    return 500;
   }
   else if(matches700){
-    return .7;
+    return 400;
   }
-  return 400;
+  return 350;
 }
 
 function Post(props: { post: PostModel }) {
