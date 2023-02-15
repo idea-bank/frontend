@@ -21,10 +21,10 @@ const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
 
 
   if(matches800){
-    return 500;
+    return 540;
   }
   else if(matches700){
-    return 400;
+    return 440;
   }
   return 350;
 }
@@ -33,9 +33,8 @@ function Post(props: { post: PostModel }) {
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
   return (
-  <Card sx={{ maxWidth: 425, height : 1,  scrollSnapAlign : "start" }}>
+  <Card sx={{ maxWidth: 425, height : 1,  scrollSnapAlign : "start", scrollPaddingBottom: 56 }}>
       <CardHeader
-      className={styles["card-header"]}
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="user">
             I
