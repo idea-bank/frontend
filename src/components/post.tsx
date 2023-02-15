@@ -45,6 +45,14 @@ function Post(props: { post: PostModel }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const [randomNumber, setRandomNumber] = useState(0);
+
+  useEffect(() => {
+    setRandomNumber(Math.floor(Math.random() * 200) + 100);
+  }, []);
+
+
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
   const isMobile = useMediaQuery('(min-width: 425px');
@@ -77,7 +85,7 @@ function Post(props: { post: PostModel }) {
             <ArrowCircleUpIcon/>
         </IconButton>
         <Typography id="vote-count">
-            100
+            {randomNumber}
         </Typography>
         <IconButton aria-label="downvote">
             <ArrowCircleDownIcon/>
