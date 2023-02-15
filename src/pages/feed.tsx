@@ -13,7 +13,6 @@ const getPosts = () : PostModel[] => {
 }
 export default function Feed() {
     const isMobile = useMediaQuery('(min-width:425px)');
-                console.log(isMobile);
     return (
         <>
         <div className={styles.feed}>
