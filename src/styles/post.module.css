@@ -1,0 +1,6 @@
+.post {
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
