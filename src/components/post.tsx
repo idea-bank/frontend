@@ -13,13 +13,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "../styles/post.module.css"
 
 
 const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
-
-
   if(matches800){
     return 540;
   }
@@ -29,11 +27,29 @@ const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
   return 350;
 }
 
+const getCardHeight = (isMobile : boolean, height : number) => {
+  return isMobile ? 721 : height-56;
+}
+
+const getMarginBottom = (isMobile : boolean, height : number) => {
+  return isMobile ? (height-721) / 8 : 8;
+}
+
 function Post(props: { post: PostModel }) {
+  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    function handleResize() {
+      setHeight(window.innerHeight);
+    }
+    handleResize(); 
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
+  const isMobile = useMediaQuery('(min-width: 425px');
   return (
-  <Card sx={{ maxWidth: 425, height : "calc(100vh - env(safe-area-inset-bottom))",  scrollSnapAlign : "start", scrollPaddingBottom: 56, marginBottom: "calc(7 + env(safe-area-inset-bottom))" }}>
+  <Card sx={{ maxWidth: 425, height: getCardHeight(isMobile, height),  scrollSnapAlign : "start", marginBottom: getMarginBottom(isMobile, height)}}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="user">
