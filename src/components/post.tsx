@@ -33,7 +33,7 @@ function Post(props: { post: PostModel }) {
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
   return (
-  <Card sx={{ maxWidth: 425, height : "calc(100vh - 56px)",  scrollSnapAlign : "start", scrollPaddingBottom: 56, marginBottom: 7 }}>
+  <Card sx={{ maxWidth: 425, height : "calc(100vh - env(safe-area-inset-bottom))",  scrollSnapAlign : "start", scrollPaddingBottom: 56, marginBottom: "calc(7 + env(safe-area-inset-bottom))" }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="user">
