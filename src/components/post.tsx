@@ -51,7 +51,7 @@ function Post(props: { post: PostModel }) {
         component="img"
         image={props.post.media_links}
       />
-      <CardContent className={styles["card-content"]}>
+      <CardContent>
         <Typography variant="body2" color="text.secondary">
             {props.post.description + " " + props.post.title}
         </Typography>
