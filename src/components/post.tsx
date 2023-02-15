@@ -16,25 +16,22 @@ import { red } from "@mui/material/colors";
 import React from "react";
 import styles from "../styles/post.module.css"
 
-const getImageHeight = () => {
-  const matches800 = useMediaQuery('(min-height: 800px)');
-  const matches700 = useMediaQuery('(min-height: 700px)');
 
-    if(matches800){
-      return .9;
-    }
-    else if(matches700){
-      return .7;
-    }
-    return 400;
-}
+const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
 
-const getCardHeight = () => {
-  
+
+  if(matches800){
+    return .9;
+  }
+  else if(matches700){
+    return .7;
+  }
+  return 400;
 }
 
 function Post(props: { post: PostModel }) {
-  
+  const matches800 = useMediaQuery('(min-height: 800px)');
+  const matches700 = useMediaQuery('(min-height: 700px)');
   return (
   <Card sx={{ maxWidth: 425, height : 1,  scrollSnapAlign : "start" }}>
       <CardHeader
@@ -51,7 +48,7 @@ function Post(props: { post: PostModel }) {
         subheader={`@${props.post.author_id}`}
       />
       <CardMedia
-        sx={{maxHeight: getImageHeight()}}
+        sx={{maxHeight: getImageHeight(matches700, matches800)}}
         component="img"
         image={props.post.media_links}
       />
@@ -75,5 +72,6 @@ function Post(props: { post: PostModel }) {
   
   );
 }
+
 
 export default Post;
