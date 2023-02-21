@@ -6,6 +6,7 @@ import MobileNav from '@/components/MobileNav';
 import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
+import useWindowHeight from '@/hooks/window-height';
 
 const getPosts = () : PostModel[] => {
     const postArr : PostModel[] = MOCK_DATA;
@@ -14,15 +15,7 @@ const getPosts = () : PostModel[] => {
     return postArr;
 }
 export default function Feed() {
-    const [height, setHeight] = useState(0);
-    useEffect(() => {
-      function handleResize() {
-        setHeight(window.innerHeight);
-      }
-      handleResize(); 
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    const height = useWindowHeight();
     return (
         <div className={styles.feed} style={{height :height}}>
             { getPosts().map((post : PostModel, index)=>{
