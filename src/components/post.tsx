@@ -15,6 +15,7 @@ import {
 import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/post.module.css"
+import useWindowHeight from "@/hooks/window-height";
 
 
 const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
@@ -36,15 +37,7 @@ const getMarginBottom = (isMobile : boolean, height : number) => {
 }
 
 function Post(props: { post: PostModel }) {
-  const [height, setHeight] = useState(0);
-  useEffect(() => {
-    function handleResize() {
-      setHeight(window.innerHeight);
-    }
-    handleResize(); 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const height = useWindowHeight();
 
   const [randomNumber, setRandomNumber] = useState(0);
 
