@@ -5,6 +5,7 @@ import Post from '@/components/post';
 import MobileNav from '@/components/MobileNav';
 import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
+import Navbar from '@/components/navbar';
 
 const getPosts = () : PostModel[] => {
     const postArr : PostModel[] = MOCK_DATA;
@@ -13,7 +14,6 @@ const getPosts = () : PostModel[] => {
     return postArr;
 }
 export default function Feed() {
-    const isMobile = useMediaQuery('(min-width:425px)');
     const [height, setHeight] = useState(0);
     useEffect(() => {
       function handleResize() {
@@ -24,7 +24,6 @@ export default function Feed() {
       return () => window.removeEventListener('resize', handleResize);
     }, []);
     return (
-        <>
         <div className={styles.feed} style={{height :height}}>
             { getPosts().map((post : PostModel, index)=>{
                 return <Post 
@@ -33,9 +32,5 @@ export default function Feed() {
                 />   
             })}
         </div>
-        {
-            !isMobile ? <MobileNav></MobileNav> : <></>
-        }
-        </>
   )
 }
