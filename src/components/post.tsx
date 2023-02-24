@@ -1,6 +1,8 @@
 import { PostModel } from "@/models/PostModel";
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import CommentIcon from '@mui/icons-material/Comment';
+import ShareIcon from '@mui/icons-material/Share';
 import {
   Avatar,
   Card,
@@ -82,6 +84,12 @@ function Post(props: { post: PostModel }) {
         </Typography>
         <IconButton aria-label="downvote">
             <ArrowCircleDownIcon/>
+        </IconButton>
+        <IconButton aria-label="comment">
+            <CommentIcon/>
+        </IconButton>
+        <IconButton aria-label="share">
+            <ShareIcon/>
         </IconButton>
       </CardActions>
     </Card>
