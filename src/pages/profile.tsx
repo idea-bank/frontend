@@ -34,7 +34,7 @@ export default function Profile() {
               @jdoe
             </Typography>
             <Button variant="contained" sx={{ marginLeft: "auto" }}>
-              Follow
+              Connect
             </Button>
           </Box>
 
