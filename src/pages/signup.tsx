@@ -18,8 +18,8 @@ export default function SignUp() {
           sx={{ marginBottom: 1 }}
         />
         <TextField
-          name="username"
-          label="Username"
+          name="email"
+          label="Email"
           variant="outlined"
           helperText="What you use to log in"
           sx={{ marginBottom: 1 }}
