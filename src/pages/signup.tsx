@@ -88,7 +88,6 @@ export default function SignUp() {
             <LoadingButton
               loading
               variant="contained"
-              sx={{ width: "fit-content" }}
             >
               <span>Sign Up</span>
             </LoadingButton>
@@ -96,7 +95,6 @@ export default function SignUp() {
             <Button
               variant="contained"
               type="submit"
-              sx={{ width: "fit-content" }}
             >
               Sign Up
             </Button>
