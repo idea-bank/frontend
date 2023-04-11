@@ -16,6 +16,7 @@ import {
 import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
 import useWindowHeight from "@/hooks/window-height";
+import { useRouter } from "next/router";
 
 
 const getImageHeight = (matches700 : boolean, matches800 : boolean) => {
@@ -45,7 +46,10 @@ function Post(props: { post: PostModel }) {
     setRandomNumber(Math.floor(Math.random() * 200) + 100);
   }, []);
 
-
+  const router = useRouter();
+  const routeToDetailedView = () => {
+    router.push("post/1");
+  }
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
   const isMobile = useMediaQuery('(min-width: 425px');
@@ -67,6 +71,7 @@ function Post(props: { post: PostModel }) {
         sx={{maxHeight: getImageHeight(matches700, matches800)}}
         component="img"
         image={props.post.media_links}
+        onClick={routeToDetailedView}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
