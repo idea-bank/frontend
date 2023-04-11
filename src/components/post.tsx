@@ -1,6 +1,5 @@
 import { PostModel } from "@/models/PostModel";
-import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
-import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CommentIcon from '@mui/icons-material/Comment';
 import ShareIcon from '@mui/icons-material/Share';
 import {
@@ -16,7 +15,6 @@ import {
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
-import styles from "../styles/post.module.css"
 import useWindowHeight from "@/hooks/window-height";
 
 
@@ -76,14 +74,8 @@ function Post(props: { post: PostModel }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="upvote">
-            <ArrowCircleUpIcon/>
-        </IconButton>
-        <Typography id="vote-count">
-            {randomNumber}
-        </Typography>
-        <IconButton aria-label="downvote">
-            <ArrowCircleDownIcon/>
+        <IconButton aria-label="like">
+          <FavoriteBorderIcon/>
         </IconButton>
         <IconButton aria-label="comment">
             <CommentIcon/>
