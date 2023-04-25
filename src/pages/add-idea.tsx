@@ -34,77 +34,83 @@ export default function AddIdea() {
   };
 
   const router = useRouter();
-  const matches = useMediaQuery('(min-width:600px)');
+  const matches = useMediaQuery("(min-width:600px)");
 
   const getMinHeight = () => {
     return matches ? "" : "100vh";
-  }
+  };
   const getTopMargin = () => {
-    return matches ? "2%" : ""; 
-  }
+    return matches ? "2%" : "";
+  };
   return (
-    <div style={{display:"flex", flexDirection: "column", alignItems: "center", marginTop : getTopMargin()}}>
-    <Paper
-      sx={{ height: 1, maxWidth: 625, width: 1, minHeight: getMinHeight() }}
-      id="form-container"
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginTop: getTopMargin(),
+      }}
     >
-      <Typography variant="h3" sx={{ paddingLeft: 2, paddingTop: 2 }}>
-        Add an Idea
-      </Typography>
-      <form className={styles["add-idea-form"]} onSubmit={onPreview}>
-        <TextField
-          name="title"
-          label="Title"
-          variant="outlined"
-          helperText="Title of your Idea"
-          sx={{ marginBottom: 1 }}
-        />
-        <TextField
-          name="description"
-          label="Description"
-          variant="outlined"
-          helperText="Description of your Idea"
-          multiline
-          sx={{ marginBottom: 1 }}
-        ></TextField>
-    
-
-        <div id="image-upload" style={{ marginBottom: 15 }}>
-          <Button variant="contained" component="label">
-            Upload
-            <input hidden accept="image/*" multiple type="file" />
-          </Button>
-          <IconButton
-            color="primary"
-            aria-label="upload picture"
-            component="label"
-          >
-            <PhotoCamera />
-          </IconButton>
-        </div>
-        <FormControlLabel
-          control={<Checkbox />}
-          label="Link to an Existing Idea?"
-          onChange={handleLinkCheckBox}
-          sx={{ marginBottom: 1 }}
-        />
-        {hideLinkedIdea ? (
-          <></>
-        ) : (
+      <Paper
+        sx={{ height: 1, maxWidth: 625, width: 1, minHeight: getMinHeight() }}
+        id="form-container"
+      >
+        <Typography variant="h3" sx={{ paddingLeft: 2, paddingTop: 2 }}>
+          Add an Idea
+        </Typography>
+        <form className={styles["add-idea-form"]} onSubmit={onPreview}>
           <TextField
-            name="linked-idea"
-            label="Linked Idea"
+            name="title"
+            label="Title"
             variant="outlined"
-            helperText="Link to an Idea (Optional)"
+            helperText="Title of your Idea"
             sx={{ marginBottom: 1 }}
           />
-        )}
-        <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
-          Preview
-        </Button>
-        <Button variant="contained">Add Idea</Button>
-      </form>
-    </Paper>
+          <TextField
+            name="description"
+            label="Description"
+            variant="outlined"
+            helperText="Description of your Idea"
+            multiline
+            sx={{ marginBottom: 1 }}
+          ></TextField>
+
+          <div id="image-upload" style={{ marginBottom: 15 }}>
+            <Button variant="contained" component="label">
+              Upload
+              <input hidden accept="image/*" multiple type="file" />
+            </Button>
+            <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="label"
+            >
+              <PhotoCamera />
+            </IconButton>
+          </div>
+          <FormControlLabel
+            control={<Checkbox />}
+            label="Link to an Existing Idea?"
+            onChange={handleLinkCheckBox}
+            sx={{ marginBottom: 1 }}
+          />
+          {hideLinkedIdea ? (
+            <></>
+          ) : (
+            <TextField
+              name="linked-idea"
+              label="Linked Idea"
+              variant="outlined"
+              helperText="Link to an Idea (Optional)"
+              sx={{ marginBottom: 1 }}
+            />
+          )}
+          <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
+            Preview
+          </Button>
+          <Button variant="contained">Add Idea</Button>
+        </form>
+      </Paper>
     </div>
   );
 }
