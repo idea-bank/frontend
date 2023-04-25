@@ -1,7 +1,8 @@
 import { PostModel } from "@/models/PostModel";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CommentIcon from '@mui/icons-material/Comment';
-import ShareIcon from '@mui/icons-material/Share';
+import LinkIcon from '@mui/icons-material/Link';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import {
   Avatar,
   Card,
@@ -50,6 +51,9 @@ function Post(props: { post: PostModel }) {
   const routeToDetailedView = () => {
     router.push("post/1");
   }
+  const routeToLineage = () => {
+    router.push("lineage/1")
+  }
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
   const isMobile = useMediaQuery('(min-width: 425px');
@@ -82,11 +86,11 @@ function Post(props: { post: PostModel }) {
         <IconButton aria-label="like">
           <FavoriteBorderIcon/>
         </IconButton>
-        <IconButton aria-label="comment">
-            <CommentIcon/>
+        <IconButton aria-label="link">
+            <LinkIcon/>
         </IconButton>
-        <IconButton aria-label="share">
-            <ShareIcon/>
+        <IconButton aria-label="tree" onClick={routeToLineage}>
+            <AccountTreeIcon/>
         </IconButton>
       </CardActions>
     </Card>

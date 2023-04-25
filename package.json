@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest "
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -23,6 +24,7 @@
     "eslint-config-next": "13.1.6",
     "next": "13.1.6",
     "react": "18.2.0",
+    "react-d3-tree": "^3.5.2",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.7",
     "typescript": "4.9.5"
