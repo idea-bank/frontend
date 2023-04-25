@@ -1,3 +1,4 @@
+import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useCallback, useState } from "react";
 import Tree from "react-d3-tree";
@@ -42,29 +43,23 @@ const useCenteredTree = (
 
   return [dimensions, translate, containerRef];
 };
-const renderRectSvgNode = ({ nodeDatum, toggleNode }) => (
-  <g>
-    <rect width="100" height="20" x="-50" onClick={toggleNode} />
-    <text fill="black" strokeWidth="1" x="-48" y="15">
-      {nodeDatum.name}
-    </text>
-  </g>
-);
+
 const Lineage = () => {
   const [dimensions, translate, containerRef] = useCenteredTree();
   return (
     <>
+    <Paper>
       <Typography variant="h2" sx={{marginLeft: 2}}>Idea Lineage</Typography>
-      <div id="treeWrapper" style={{ width: "100vw", height: "800px" }} ref={containerRef}>
+      <div id="treeWrapper" style={{ width: "100vw", height: "100vh" }} ref={containerRef}>
         <Tree
           data={myTreeData}
           translate={translate}
           orientation="vertical"
           pathFunc="step"
-          renderCustomNodeElement={renderRectSvgNode}
           separation={{siblings: 1.5}}
-        />
+          />
       </div>
+    </Paper>
     </>
   );
 };

@@ -2,6 +2,7 @@ import { PostModel } from "@/models/PostModel";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CommentIcon from '@mui/icons-material/Comment';
 import LinkIcon from '@mui/icons-material/Link';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import {
   Avatar,
   Card,
@@ -85,11 +86,11 @@ function Post(props: { post: PostModel }) {
         <IconButton aria-label="like">
           <FavoriteBorderIcon/>
         </IconButton>
-        <IconButton aria-label="comment">
-            <CommentIcon/>
-        </IconButton>
-        <IconButton aria-label="link" onClick={routeToLineage}>
+        <IconButton aria-label="link">
             <LinkIcon/>
+        </IconButton>
+        <IconButton aria-label="tree" onClick={routeToLineage}>
+            <AccountTreeIcon/>
         </IconButton>
       </CardActions>
     </Card>
