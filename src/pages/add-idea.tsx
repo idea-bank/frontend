@@ -6,15 +6,23 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "../styles/add-idea.module.css";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { AddIdeaData } from "@/data/add-idea-handler";
+
 
 export default function AddIdea() {
   const [post, setPost] = useState({} as PostModel);
   const [hideLinkedIdea, setHideLinkedIdea] = useState<boolean>(true);
+
+
+  const { register, setValue, handleSubmit } = useForm<AddIdeaData>();
+
+
   const onPreview = (event: any) => {
     event.preventDefault();
     const postToPreview: PostModel = {
@@ -32,6 +40,12 @@ export default function AddIdea() {
   const handleLinkCheckBox = () => {
     setHideLinkedIdea(!hideLinkedIdea);
   };
+  const setExistingIdea = (idea: string) => {
+    setHideLinkedIdea(false);
+    setValue("ideaTitle", `${idea} -- Copy`);
+    setValue("linkedIdea", idea);
+
+  };
 
   const router = useRouter();
   const matches = useMediaQuery("(min-width:600px)");
@@ -42,6 +56,15 @@ export default function AddIdea() {
   const getTopMargin = () => {
     return matches ? "2%" : "";
   };
+
+  useEffect(() => {
+    const search = router.asPath.split('?')[1];
+    const params = new URLSearchParams(search);
+    const idea = params.get('idea');    
+    if (idea) {
+      setExistingIdea(idea);
+    }
+  }, []);
   return (
     <div
       style={{
@@ -60,19 +83,19 @@ export default function AddIdea() {
         </Typography>
         <form className={styles["add-idea-form"]} onSubmit={onPreview}>
           <TextField
-            name="title"
             label="Title"
             variant="outlined"
             helperText="Title of your Idea"
             sx={{ marginBottom: 1 }}
+            {...register("ideaTitle")}
           />
           <TextField
-            name="description"
             label="Description"
             variant="outlined"
             helperText="Description of your Idea"
             multiline
             sx={{ marginBottom: 1 }}
+            {...register("ideaDescription")}
           ></TextField>
 
           <div id="image-upload" style={{ marginBottom: 15 }}>
@@ -92,17 +115,18 @@ export default function AddIdea() {
             control={<Checkbox />}
             label="Link to an Existing Idea?"
             onChange={handleLinkCheckBox}
+            checked={!hideLinkedIdea}
             sx={{ marginBottom: 1 }}
           />
           {hideLinkedIdea ? (
             <></>
           ) : (
             <TextField
-              name="linked-idea"
               label="Linked Idea"
               variant="outlined"
               helperText="Link to an Idea (Optional)"
               sx={{ marginBottom: 1 }}
+              {...register("linkedIdea")}
             />
           )}
           <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
