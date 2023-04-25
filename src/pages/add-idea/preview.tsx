@@ -1,4 +1,4 @@
 
 export default function Preview() {
-    <p>Post-Preview</p>
+    return <p>Post-Preview</p>;
 }
