@@ -1,7 +1,8 @@
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useCallback, useState } from "react";
-import Tree from "react-d3-tree";
+import dynamic from 'next/dynamic';
+const Tree = dynamic(() => import('react-d3-tree'), { ssr: false });
 const myTreeData = {
   name: "Main Idea",
   children: [
