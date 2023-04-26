@@ -122,7 +122,7 @@ const renderMaterialCardNode = ({
     <foreignObject {...foreignObjectProps}>
       <Card sx={{border: 1}}>
         <CardHeader
-          titleTypographyProps={{fontSize: 14, textAlign: "center"}}
+          titleTypographyProps={{fontSize: 16, textAlign: "center"}}
           title={nodeDatum.name}
          >
         </CardHeader>
