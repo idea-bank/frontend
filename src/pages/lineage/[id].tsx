@@ -3,6 +3,9 @@ import Typography from "@mui/material/Typography";
 import { useCallback, useState } from "react";
 import dynamic from 'next/dynamic';
 import { useRouter } from "next/router";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
 const Tree = dynamic(() => import('react-d3-tree'), { ssr: false });
 const myTreeData = {
   name: "Main Idea",
@@ -109,6 +112,30 @@ const renderForeignObjectNode = ({
   </g>
 );
 
+const renderMaterialCardNode = ({
+  nodeDatum,
+  onNodeClick,
+  foreignObjectProps
+}) => (
+  <g transform={`translate(${-120},${-225})`} onClick={onNodeClick}>
+    {/* `foreignObject` requires width & height to be explicitly set. */}
+    <foreignObject {...foreignObjectProps}>
+      <Card sx={{border: 1}}>
+        <CardHeader
+          titleTypographyProps={{fontSize: 14, textAlign: "center"}}
+          title={nodeDatum.name}
+         >
+        </CardHeader>
+        <CardMedia
+        sx={{maxHeight: 200, maxWidth: 200 }}
+        component="img"
+        image={"https://dummyimage.com/200x200/bdbdbd/ffffff"}
+      />
+      </Card>
+    </foreignObject>
+  </g>
+);
+
 const Lineage = () => {
   const [dimensions, translate, containerRef] = useCenteredTree();
   const nodeSize = { x: 200, y: 300 };
@@ -129,7 +156,7 @@ const Lineage = () => {
           collapsible={false}
           separation={{siblings: 2, nonSiblings: 2  }}
           renderCustomNodeElement={(rd3tProps) =>
-            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps })
+            renderMaterialCardNode({ ...rd3tProps, foreignObjectProps })
           }
           onNodeClick={(node) => router.push("/idea/1")}
           />
