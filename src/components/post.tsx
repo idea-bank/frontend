@@ -49,10 +49,15 @@ function Post(props: { post: PostModel }) {
 
   const router = useRouter();
   const routeToDetailedView = () => {
-    router.push("post/1");
+    router.push("/post/1");
   }
   const routeToLineage = () => {
     router.push("lineage/1")
+  }
+  const linkIdea = () => {
+    router.push({
+      pathname: "/add-idea", 
+      query: {idea: props.post.title}})
   }
   const matches800 = useMediaQuery('(min-height: 800px)');
   const matches700 = useMediaQuery('(min-height: 700px)');
@@ -86,7 +91,7 @@ function Post(props: { post: PostModel }) {
         <IconButton aria-label="like">
           <FavoriteBorderIcon/>
         </IconButton>
-        <IconButton aria-label="link">
+        <IconButton aria-label="link" onClick={linkIdea}>
             <LinkIcon/>
         </IconButton>
         <IconButton aria-label="tree" onClick={routeToLineage}>
