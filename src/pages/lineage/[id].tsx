@@ -2,7 +2,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useCallback, useState } from "react";
 import Tree from "react-d3-tree";
-
+import styles from "@/styles/custom-tree.module.css"
 const myTreeData = {
   name: "Main Idea",
   children: [
@@ -11,17 +11,64 @@ const myTreeData = {
       children: [
         {
           name: "Sub Idea 1.1",
+          children: [
+            {
+              name: "Sub Idea 1.1.1",
+            },
+            {
+              name: "Sub Idea 1.1.2",
+            },
+          ],
         },
         {
           name: "Sub Idea 1.2",
+          children: [
+            {
+              name: "Sub Idea 1.2.1",
+            },
+            {
+              name: "Sub Idea 1.2.2",
+            },
+          ],
         },
       ],
     },
     {
       name: "Sub Idea 2",
+      children: [
+        {
+          name: "Sub Idea 2.1",
+        },
+        {
+          name: "Sub Idea 2.2",
+        },
+        {
+          name: "Sub Idea 2.3",
+          children: [
+            {
+              name: "Sub Idea 2.3.1",
+            },
+            {
+              name: "Sub Idea 2.3.2",
+            },
+            {
+              name: "Sub Idea 2.3.3",
+              children: [
+                {
+                  name: "Sub Idea 2.3.3.1",
+                },
+                {
+                  name: "Sub Idea 2.3.3.2",
+                },
+              ],
+            },
+          ],
+        },
+      ],
     },
   ],
 };
+
 type DefaultTranslate = { x: number; y: number };
 type Dimensions = { width: number; height: number };
 type Translate = { x: number; y: number };
@@ -37,15 +84,36 @@ const useCenteredTree = (
     if (containerElem !== null) {
       const { width, height } = containerElem.getBoundingClientRect();
       setDimensions({ width, height });
-      setTranslate({ x: width / 2, y: 50 });
+      setTranslate({ x: width / 2, y: 300 });
     }
   }, []);
 
   return [dimensions, translate, containerRef];
 };
 
+
+const renderForeignObjectNode = ({
+  nodeDatum,
+  toggleNode,
+  foreignObjectProps
+}) => (
+  <g transform={`translate(${-120},${-225})`}>
+    {/* `foreignObject` requires width & height to be explicitly set. */}
+    <foreignObject {...foreignObjectProps}>
+      <div style={{ border: "1px solid black", backgroundColor: "#dedede" }}>
+        <h3 style={{ textAlign: "center" }}>{nodeDatum.name}</h3>
+      </div>
+      <img src="https://dummyimage.com/200x200/bdbdbd/ffffff" alt="" style={{height: 200, width: 198, objectFit: "cover", border: "1px solid black"}}/>
+    </foreignObject>
+  </g>
+);
+
 const Lineage = () => {
   const [dimensions, translate, containerRef] = useCenteredTree();
+  const nodeSize = { x: 200, y: 300 };
+  const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x: 20 };
+
+
   return (
     <>
     <Paper>
@@ -54,9 +122,17 @@ const Lineage = () => {
         <Tree
           data={myTreeData}
           translate={translate}
+          nodeSize={nodeSize}
           orientation="vertical"
           pathFunc="step"
-          separation={{siblings: 1.5}}
+          collapsible={false}
+          separation={{siblings: 2, nonSiblings: 2  }}
+          rootNodeClassName={styles["node__root"]}
+          branchNodeClassName={styles["node__branch"]}
+          leafNodeClassName={styles["node__leaf"]}
+          renderCustomNodeElement={(rd3tProps) =>
+            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps })
+          }
           />
       </div>
     </Paper>
