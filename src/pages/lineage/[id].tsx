@@ -2,6 +2,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useCallback, useState } from "react";
 import dynamic from 'next/dynamic';
+import { useRouter } from "next/router";
 const Tree = dynamic(() => import('react-d3-tree'), { ssr: false });
 const myTreeData = {
   name: "Main Idea",
@@ -94,10 +95,10 @@ const useCenteredTree = (
 
 const renderForeignObjectNode = ({
   nodeDatum,
-  toggleNode,
+  onNodeClick,
   foreignObjectProps
 }) => (
-  <g transform={`translate(${-120},${-225})`}>
+  <g transform={`translate(${-120},${-225})`} onClick={onNodeClick}>
     {/* `foreignObject` requires width & height to be explicitly set. */}
     <foreignObject {...foreignObjectProps}>
       <div style={{ border: "1px solid black", backgroundColor: "#dedede" }}>
@@ -112,8 +113,8 @@ const Lineage = () => {
   const [dimensions, translate, containerRef] = useCenteredTree();
   const nodeSize = { x: 200, y: 300 };
   const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x: 20 };
-
-
+  const router = useRouter();
+  /* node.data.name */
   return (
     <>
     <Paper>
@@ -130,6 +131,7 @@ const Lineage = () => {
           renderCustomNodeElement={(rd3tProps) =>
             renderForeignObjectNode({ ...rd3tProps, foreignObjectProps })
           }
+          onNodeClick={(node) => router.push("/idea/1")}
           />
       </div>
     </Paper>
