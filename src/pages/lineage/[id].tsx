@@ -2,7 +2,6 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useCallback, useState } from "react";
 import Tree from "react-d3-tree";
-import styles from "@/styles/custom-tree.module.css"
 const myTreeData = {
   name: "Main Idea",
   children: [
@@ -127,9 +126,6 @@ const Lineage = () => {
           pathFunc="step"
           collapsible={false}
           separation={{siblings: 2, nonSiblings: 2  }}
-          rootNodeClassName={styles["node__root"]}
-          branchNodeClassName={styles["node__branch"]}
-          leafNodeClassName={styles["node__leaf"]}
           renderCustomNodeElement={(rd3tProps) =>
             renderForeignObjectNode({ ...rd3tProps, foreignObjectProps })
           }
