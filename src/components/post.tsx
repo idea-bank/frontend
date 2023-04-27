@@ -49,10 +49,10 @@ function Post(props: { post: PostModel }) {
 
   const router = useRouter();
   const routeToDetailedView = () => {
-    router.push("/post/1");
+    router.push(`/idea/${props.post.post_id}`);
   }
   const routeToLineage = () => {
-    router.push("lineage/1")
+    router.push(`/idea/${props.post.post_id}/lineage`)
   }
   const linkIdea = () => {
     router.push({
