@@ -137,6 +137,7 @@ const Lineage = () => {
           orientation="vertical"
           pathFunc="step"
           collapsible={false}
+          zoom={.7}
           separation={{siblings: 2, nonSiblings: 2  }}
           renderCustomNodeElement={(rd3tProps) =>
             renderMaterialCardNode({ ...rd3tProps, foreignObjectProps })
