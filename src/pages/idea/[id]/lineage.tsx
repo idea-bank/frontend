@@ -126,7 +126,7 @@ const Lineage = () => {
   const router = useRouter();
   /* node.data.name */
   return (
-    <>
+    
     <Paper>
       <Typography variant="h2" sx={{marginLeft: 2}}>Idea Lineage</Typography>
       <div id="treeWrapper" style={{ width: "100vw", height: "100vh" }} ref={containerRef}>
@@ -145,7 +145,6 @@ const Lineage = () => {
           />
       </div>
     </Paper>
-    </>
   );
 };
 
