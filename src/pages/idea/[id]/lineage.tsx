@@ -95,23 +95,6 @@ const useCenteredTree = (
   return [dimensions, translate, containerRef];
 };
 
-
-const renderForeignObjectNode = ({
-  nodeDatum,
-  onNodeClick,
-  foreignObjectProps
-}) => (
-  <g transform={`translate(${-120},${-225})`} onClick={onNodeClick}>
-    {/* `foreignObject` requires width & height to be explicitly set. */}
-    <foreignObject {...foreignObjectProps}>
-      <div style={{ border: "1px solid black", backgroundColor: "#dedede" }}>
-        <h3 style={{ textAlign: "center" }}>{nodeDatum.name}</h3>
-      </div>
-      <img src="https://dummyimage.com/200x200/bdbdbd/ffffff" alt="" style={{height: 200, width: 198, objectFit: "cover", border: "1px solid black"}}/>
-    </foreignObject>
-  </g>
-);
-
 const renderMaterialCardNode = ({
   nodeDatum,
   onNodeClick,
