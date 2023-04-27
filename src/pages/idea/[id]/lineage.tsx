@@ -88,7 +88,7 @@ const useCenteredTree = (
     if (containerElem !== null) {
       const { width, height } = containerElem.getBoundingClientRect();
       setDimensions({ width, height });
-      setTranslate({ x: width / 2, y: 300 });
+      setTranslate({ x: width / 2, y: 200 });
     }
   }, []);
 
@@ -126,7 +126,7 @@ const Lineage = () => {
   const router = useRouter();
   /* node.data.name */
   return (
-    <>
+    
     <Paper>
       <Typography variant="h2" sx={{marginLeft: 2}}>Idea Lineage</Typography>
       <div id="treeWrapper" style={{ width: "100vw", height: "100vh" }} ref={containerRef}>
@@ -137,6 +137,7 @@ const Lineage = () => {
           orientation="vertical"
           pathFunc="step"
           collapsible={false}
+          zoom={.7}
           separation={{siblings: 2, nonSiblings: 2  }}
           renderCustomNodeElement={(rd3tProps) =>
             renderMaterialCardNode({ ...rd3tProps, foreignObjectProps })
@@ -145,7 +146,6 @@ const Lineage = () => {
           />
       </div>
     </Paper>
-    </>
   );
 };
 

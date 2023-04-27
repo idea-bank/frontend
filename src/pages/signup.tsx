@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { signup, SignupData } from "@/data/signup-handler";
+import { useIsSmall } from "@/hooks/media-queries";
 
 
 type AlertInfo = {
@@ -20,7 +21,7 @@ export default function SignUp() {
   const [isLoading, setLoading] = useState(false);
   const [status, setStatus] = useState<AlertInfo>();
   const { register, handleSubmit } = useForm<SignupData>();
-
+  const isMobile = useIsSmall();
   const onSubmit: SubmitHandler<SignupData> = async (data: SignupData) => {
     try {
       setLoading(true);
@@ -49,7 +50,9 @@ export default function SignUp() {
           height: 1,
           maxWidth: 625,
           width: 0.93,
-          minHeight: "100vh",
+          minHeight: isMobile ? "100vh" : "",
+          marginTop: isMobile ? "0" : "3%",
+
           padding: 2,
           display: "block",
         }}
