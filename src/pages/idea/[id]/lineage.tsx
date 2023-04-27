@@ -88,7 +88,7 @@ const useCenteredTree = (
     if (containerElem !== null) {
       const { width, height } = containerElem.getBoundingClientRect();
       setDimensions({ width, height });
-      setTranslate({ x: width / 2, y: 300 });
+      setTranslate({ x: width / 2, y: 200 });
     }
   }, []);
 
