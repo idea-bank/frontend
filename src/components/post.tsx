@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import useWindowHeight from "@/hooks/window-height";
 import { useRouter } from "next/router";
 import { useIsSmall } from "@/hooks/media-queries";
-
+import ParkIcon from '@mui/icons-material/Park';
 const getImageHeight = (matches700: boolean, matches800: boolean) => {
   if (matches800) {
     return 540;
@@ -50,6 +50,9 @@ function Post(props: { post: PostModel }) {
   const routeToLineage = () => {
     router.push(`/idea/${props.post.post_id}/lineage`);
   };
+  const routeToGraph = () => {
+    router.push(`/idea/${props.post.post_id}/component-graph`)
+  }
   const linkIdea = () => {
     router.push({
       pathname: "/add-idea",
@@ -101,6 +104,9 @@ function Post(props: { post: PostModel }) {
           <LinkIcon />
         </IconButton>
         <IconButton aria-label="tree" onClick={routeToLineage}>
+          <ParkIcon />
+        </IconButton>
+        <IconButton aria-label="graph" onClick={routeToGraph}>
           <AccountTreeIcon />
         </IconButton>
       </CardActions>
