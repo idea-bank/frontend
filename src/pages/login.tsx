@@ -9,20 +9,38 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { signup, SignupData } from "@/data/signup-handler";
 import Link from "next/link";
+import { AuthData } from "@/data/auth-handler";
+import fetchAuthData from "@/data/auth-handler";
 
 type AlertInfo = {
   alert: AlertColor;
   message: String;
 };
 export default function Login() {
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<AlertInfo>();
-  const { register, handleSubmit } = useForm<SignupData>();
+  const [jwt, setJwt] = useState<string>();
 
-  const onSubmit: SubmitHandler<SignupData> = async (data: SignupData) => {
-    // TODO: Implement login with backend API
+  const { register, handleSubmit } = useForm<AuthData>();
+
+  const onSubmit: SubmitHandler<AuthData> = async (data: AuthData) => {
+    try {
+      setLoading(true);
+      setJwt((await fetchAuthData(data)).sucess);
+      setStatus({
+        alert: "success",
+        message: "Success. Redirecting you to your feed.",
+      });
+    } catch (err) {
+      console.log(err);
+      setStatus({
+        alert: "error",
+        message: "Error. Invalid credentials received. Try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,21 +79,17 @@ export default function Login() {
             {...register("password")}
           ></TextField>
           {isLoading ? (
-            <LoadingButton
-              loading
-              variant="contained"
-            >
+            <LoadingButton loading variant="contained">
               <span>Log in</span>
             </LoadingButton>
           ) : (
-            <Button
-              variant="contained"
-              type="submit"
-            >
+            <Button variant="contained" type="submit">
               Log in
             </Button>
           )}
-         <Typography sx={{textAlign: "center", marginTop: 2}}>New to Idea Bank? <Link href="/signup">Create an Account</Link>.</Typography>
+          <Typography sx={{ textAlign: "center", marginTop: 2 }}>
+            New to Idea Bank? <Link href="/signup">Create an Account</Link>.
+          </Typography>
 
           {status ? (
             <Alert severity={status.alert} sx={{ marginTop: 1 }}>
