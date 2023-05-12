@@ -13,7 +13,7 @@ export async function signup(formData: SignupData): Promise<boolean> {
     credentials: base64Credentials,
   };
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_ROOT_URL}/users/web2/new`,
+    `api/v1/users/web2/new`,
     {
       method: "POST",
       headers: {
