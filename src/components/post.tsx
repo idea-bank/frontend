@@ -96,7 +96,6 @@ export default function Post(props: { idea: Idea }) {
         <CardMedia
           sx={{
             height: 1,
-            objectFit: "contain",
           }}
           component="img"
           image={props.idea.image_url}
