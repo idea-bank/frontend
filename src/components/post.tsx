@@ -40,12 +40,6 @@ const getMarginBottom = (isMobile: boolean, height: number) => {
 export default function Post(props: { idea: Idea }) {
   const height = useWindowHeight();
 
-  const [randomNumber, setRandomNumber] = useState(0);
-
-  useEffect(() => {
-    setRandomNumber(Math.floor(Math.random() * 200) + 100);
-  }, []);
-
   const router = useRouter();
   const routeToDetailedView = () => {
     router.push(`/idea/${props.idea.author}/${props.idea.title}`);
