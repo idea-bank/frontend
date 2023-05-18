@@ -10,13 +10,14 @@ import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
 import useWindowHeight from "@/hooks/window-height";
 import { useRouter } from "next/router";
 import { useIsSmall } from "@/hooks/media-queries";
-import ParkIcon from '@mui/icons-material/Park';
+import ParkIcon from "@mui/icons-material/Park";
+import { Idea } from "@/data/idea-handler";
 const getImageHeight = (matches700: boolean, matches800: boolean) => {
   if (matches800) {
     return 540;
@@ -34,7 +35,7 @@ const getMarginBottom = (isMobile: boolean, height: number) => {
   return isMobile ? (height - 721) / 8 : 8;
 };
 
-function Post(props: { post: PostModel }) {
+export default function Post(props: { idea: Idea }) {
   const height = useWindowHeight();
 
   const [randomNumber, setRandomNumber] = useState(0);
@@ -45,18 +46,18 @@ function Post(props: { post: PostModel }) {
 
   const router = useRouter();
   const routeToDetailedView = () => {
-    router.push(`/idea/${props.post.post_id}`);
+    router.push(`/idea/${props.idea.author}/${props.idea.title}`);
   };
   const routeToLineage = () => {
-    router.push(`/idea/${props.post.post_id}/lineage`);
+    router.push(`/lineage/${props.idea.author}/${props.idea.title}`);
   };
   const routeToGraph = () => {
-    router.push(`/idea/${props.post.post_id}/component-graph`)
-  }
+    router.push(`/component-graph/${props.idea.author}/${props.idea.title}`);
+  };
   const linkIdea = () => {
     router.push({
       pathname: "/add-idea",
-      query: { idea: props.post.title },
+      query: { idea: props.idea.title },
     });
   };
   const matches800 = useMediaQuery("(min-height: 800px)");
@@ -82,18 +83,29 @@ function Post(props: { post: PostModel }) {
           </Avatar>
         }
         action={<IconButton aria-label="settings"></IconButton>}
-        title={props.post.title}
-        subheader={`@${props.post.author_id}`}
+        title={props.idea.title}
+        subheader={`@${props.idea.author}`}
       />
-      <CardMedia
-        sx={{ maxHeight: getImageHeight(matches700, matches800) }}
-        component="img"
-        image={props.post.media_links}
-        onClick={routeToDetailedView}
-      />
+      <Box
+        sx={{
+          height: getImageHeight(matches700, matches800),
+          bgcolor: "rgb(248 250 252)",
+        }}
+      >
+        <CardMedia
+          sx={{
+            height: 1,
+            objectFit: "contain",
+          }}
+          component="img"
+          image={props.idea.image_url}
+          onClick={routeToDetailedView}
+        />
+      </Box>
+
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {props.post.description + " " + props.post.title}
+          {props.idea.description + " " + props.idea.title}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -113,5 +125,3 @@ function Post(props: { post: PostModel }) {
     </Card>
   );
 }
-
-export default Post;
