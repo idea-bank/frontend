@@ -1,5 +1,6 @@
-import { PostModel } from "@/models/PostModel";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
 import LinkIcon from "@mui/icons-material/Link";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import Avatar from "@mui/material/Avatar";
@@ -18,6 +19,7 @@ import { useRouter } from "next/router";
 import { useIsSmall } from "@/hooks/media-queries";
 import ParkIcon from "@mui/icons-material/Park";
 import { Idea } from "@/data/idea-handler";
+
 const getImageHeight = (matches700: boolean, matches800: boolean) => {
   if (matches800) {
     return 540;
@@ -59,6 +61,11 @@ export default function Post(props: { idea: Idea }) {
       pathname: "/add-idea",
       query: { idea: props.idea.title },
     });
+  };
+
+  const [liked, setLiked] = useState(false);
+  const likeIdea = () => {
+    setLiked(!liked);
   };
   const matches800 = useMediaQuery("(min-height: 800px)");
   const matches700 = useMediaQuery("(min-height: 700px)");
@@ -109,9 +116,11 @@ export default function Post(props: { idea: Idea }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="like">
-          <FavoriteBorderIcon />
-        </IconButton>
+        {liked ? (
+          <FavoriteIcon sx={{ color: "#e62723" }} onClick={likeIdea} />
+        ) : (
+          <FavoriteBorderIcon onClick={likeIdea} />
+        )}
         <IconButton aria-label="link" onClick={linkIdea}>
           <LinkIcon />
         </IconButton>
