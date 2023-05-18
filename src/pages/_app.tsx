@@ -23,9 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
     return 0;
   };
   return (
-    <Box
-      sx={{ paddingLeft: getLeftPadding(), marginTop: isMobile ? "" : "3%" }}
-    >
+    <Box sx={{ paddingLeft: getLeftPadding() }}>
       <Component {...pageProps} />
       <Navbar />
     </Box>
