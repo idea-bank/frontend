@@ -1,18 +1,28 @@
 import styles from "../styles/feed.module.css";
-import { PostModel } from "@/models/PostModel";
-import MOCK_DATA from "@/data/MOCK_DATA.json";
 import Post from "@/components/post";
 import useWindowHeight from "@/hooks/window-height";
 import { useIsSmall } from "@/hooks/media-queries";
+import { Idea, fetchFeed } from "@/data/idea-handler";
+import { useEffect, useState } from "react";
 
-const getPosts = (): PostModel[] => {
-  const postArr: PostModel[] = MOCK_DATA;
-
-  return postArr;
-};
 export default function Feed() {
   const height = useWindowHeight();
   const isMobile = useIsSmall();
+
+  const [data, setData] = useState<Idea[]>([]);
+  const fetchData = async () => {
+    try {
+      const feedData = await fetchFeed();
+      setData(feedData);
+      // Access the data and perform operations
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div
       className={styles.feed}
@@ -22,8 +32,8 @@ export default function Feed() {
         scrollSnapType: isMobile ? "y mandatory" : "inherit",
       }}
     >
-      {getPosts().map((post: PostModel, index) => {
-        return <Post post={post} key={index} />;
+      {data.map((idea, index) => {
+        return <Post idea={idea} key={index} />;
       })}
     </div>
   );
