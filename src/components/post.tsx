@@ -109,11 +109,14 @@ export default function Post(props: { idea: Idea }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {liked ? (
-          <FavoriteIcon sx={{ color: "#e62723" }} onClick={likeIdea} />
-        ) : (
-          <FavoriteBorderIcon onClick={likeIdea} />
-        )}
+        <IconButton onClick={likeIdea}>
+          {liked ? (
+            <FavoriteIcon sx={{ color: "#e62723" }} />
+          ) : (
+            <FavoriteBorderIcon />
+          )}
+        </IconButton>
+
         <IconButton aria-label="link" onClick={linkIdea}>
           <LinkIcon />
         </IconButton>
