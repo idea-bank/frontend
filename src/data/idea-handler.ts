@@ -7,12 +7,12 @@ interface FeedResponseData {
   paged_items: PagedItem[];
 }
 
-interface PagedItem {
+export interface PagedItem {
   author: string;
   title: string;
 }
 
-const feedHelper = async (): Promise<FeedResponseData> => {
+export const fetchFeed = async (): Promise<FeedResponseData> => {
   const response = await fetch(`${ideaServiceRoot}/feed/page`);
   if (response.ok) {
     const data: FeedResponseData = await response.json();
@@ -37,9 +37,8 @@ type IdeaResponse = {
   items: Idea[];
 };
 
-export const fetchFeed = async (): Promise<Idea[]> => {
+export const fetchBulk = async (pagedItems: PagedItem[]): Promise<Idea[]> => {
   const ideas: Idea[] = [];
-  const pagedItems = (await feedHelper()).paged_items;
 
   for (const item of pagedItems) {
     const response = await fetch(
