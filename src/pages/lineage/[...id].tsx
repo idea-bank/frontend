@@ -1,77 +1,16 @@
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
+import { RawNodeDatum } from "react-d3-tree";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 const Tree = dynamic(() => import("react-d3-tree"), { ssr: false });
-const myTreeData = {
-  name: "Main Idea",
-  children: [
-    {
-      name: "Sub Idea 1",
-      children: [
-        {
-          name: "Sub Idea 1.1",
-          children: [
-            {
-              name: "Sub Idea 1.1.1",
-            },
-            {
-              name: "Sub Idea 1.1.2",
-            },
-          ],
-        },
-        {
-          name: "Sub Idea 1.2",
-          children: [
-            {
-              name: "Sub Idea 1.2.1",
-            },
-            {
-              name: "Sub Idea 1.2.2",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Sub Idea 2",
-      children: [
-        {
-          name: "Sub Idea 2.1",
-        },
-        {
-          name: "Sub Idea 2.2",
-        },
-        {
-          name: "Sub Idea 2.3",
-          children: [
-            {
-              name: "Sub Idea 2.3.1",
-            },
-            {
-              name: "Sub Idea 2.3.2",
-            },
-            {
-              name: "Sub Idea 2.3.3",
-              children: [
-                {
-                  name: "Sub Idea 2.3.3.1",
-                },
-                {
-                  name: "Sub Idea 2.3.3.2",
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-};
 
 type DefaultTranslate = { x: number; y: number };
 type Dimensions = { width: number; height: number };
@@ -103,22 +42,124 @@ const renderMaterialCardNode = ({
   <g transform={`translate(${-120},${-225})`} onClick={onNodeClick}>
     {/* `foreignObject` requires width & height to be explicitly set. */}
     <foreignObject {...foreignObjectProps}>
-      <Card sx={{ border: 1 }}>
+      <Card sx={{ border: 1, bgcolor: "#f3f3f3" }}>
         <CardHeader
-          titleTypographyProps={{ fontSize: 16, textAlign: "center" }}
+          titleTypographyProps={{
+            fontSize: 16,
+            textAlign: "center",
+          }}
           title={nodeDatum.name}
         ></CardHeader>
         <CardMedia
-          sx={{ maxHeight: 200, maxWidth: 200 }}
+          sx={{ height: 200, width: 200, objectFit: "fill" }}
           component="img"
-          image={"https://dummyimage.com/200x200/bdbdbd/ffffff"}
+          image={nodeDatum.imageUrl}
         />
       </Card>
     </foreignObject>
   </g>
 );
 
+interface TreeData extends RawNodeDatum {
+  children?: TreeData[];
+  imageUrl?: string;
+}
+
+function mapLineageToTreeData(lineage: any): TreeData {
+  const keys = Object.keys(lineage);
+  const name = keys[0]; // The first key in the lineage object represents the name
+  const children = lineage[name].children;
+
+  if (children && Array.isArray(children)) {
+    return {
+      name,
+      children: children.map((child: any) => mapLineageToTreeData(child)),
+    };
+  } else {
+    return {
+      name: lineage,
+      children: [],
+    };
+  }
+}
+
+interface LineageResponse {
+  status_code: number;
+  msg: string;
+  lineage: TreeData;
+}
+
 const Lineage = () => {
+  const [treeData, setTreeData] = useState<TreeData>({} as TreeData);
+
+  const [loading, setLoading] = useState(true);
+
+  const addImageUrlToNode = async (treePointer: TreeData): Promise<void> => {
+    if (treePointer.children !== undefined) {
+      for (const child of treePointer.children) {
+        addImageUrlToNode(child);
+      }
+    }
+
+    if (treePointer.name) {
+      return new Promise<void>((resolve, reject) => {
+        fetch(
+          `https://concepts-service-n5ey5.ondigitalocean.app/concepts/${treePointer.name}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            setTreeData((prevTreeData) => {
+              const updatedTreeData = { ...prevTreeData }; // Create a copy of the previous treeData
+              const nodeToUpdate = findNode(updatedTreeData, treePointer.name); // Find the node to update in the copied treeData
+              if (nodeToUpdate) {
+                nodeToUpdate.imageUrl = data.items[0].image_url; // Set the imageUrl
+              }
+              return updatedTreeData; // Return the updated treeData
+            });
+            resolve();
+          });
+      });
+    }
+  };
+
+  const findNode = (node: TreeData, name: string): TreeData | undefined => {
+    if (node.name === name) {
+      return node;
+    }
+    if (node.children) {
+      for (const child of node.children) {
+        const foundNode = findNode(child, name);
+        if (foundNode) {
+          return foundNode;
+        }
+      }
+    }
+    return undefined;
+  };
+
+  const fetchLineage = async () => {
+    setLoading(true);
+    const id = window.location.href.split("/lineage/")[1].split("/");
+    try {
+      fetch(
+        `https://concepts-service-n5ey5.ondigitalocean.app/concepts/${id[0]}/${id[1]}/lineage`
+      )
+        .then((res) => res.json())
+        .then(async (data: LineageResponse) => {
+          const treeData = mapLineageToTreeData(data.lineage);
+          setTreeData(treeData);
+          await addImageUrlToNode(treeData);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLineage();
+  }, []);
+
   const [dimensions, translate, containerRef] = useCenteredTree();
   const nodeSize = { x: 200, y: 300 };
   const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x: 20 };
@@ -134,20 +175,33 @@ const Lineage = () => {
         style={{ width: "100vw", height: "100vh" }}
         ref={containerRef}
       >
-        <Tree
-          data={myTreeData}
-          translate={translate}
-          nodeSize={nodeSize}
-          orientation="vertical"
-          pathFunc="step"
-          collapsible={false}
-          zoom={0.7}
-          separation={{ siblings: 2, nonSiblings: 2 }}
-          renderCustomNodeElement={(rd3tProps) =>
-            renderMaterialCardNode({ ...rd3tProps, foreignObjectProps })
-          }
-          onNodeClick={(node) => router.push("/idea/1")}
-        />
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: 2,
+              paddingBottom: 6,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Tree
+            data={treeData}
+            translate={translate}
+            nodeSize={nodeSize}
+            orientation="vertical"
+            pathFunc="step"
+            collapsible={false}
+            zoom={0.7}
+            separation={{ siblings: 2, nonSiblings: 2 }}
+            renderCustomNodeElement={(rd3tProps) =>
+              renderMaterialCardNode({ ...rd3tProps, foreignObjectProps })
+            }
+            onNodeClick={(node) => router.push(`/idea/${node.data.name}`)}
+          />
+        )}
       </div>
     </Paper>
   );
