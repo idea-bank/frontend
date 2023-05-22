@@ -1,6 +1,8 @@
 import Post from "@/components/post";
 import { Idea, fetchExact } from "@/data/idea-handler";
 import { useIsSmall } from "@/hooks/media-queries";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -30,7 +32,20 @@ export default function DetailedPost() {
         marginTop: isMobile ? "" : 20,
       }}
     >
-      {idea === undefined ? "loading" : <Post idea={idea!}></Post>}
+      {idea === undefined ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: 2,
+            paddingBottom: 6,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Post idea={idea!}></Post>
+      )}
     </div>
   );
 }
