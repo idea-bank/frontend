@@ -12,16 +12,51 @@ import styles from "../styles/add-idea.module.css";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { AddIdeaData } from "@/data/add-idea-handler";
 
+interface AddIdeaData {
+  username: string;
+  ideaTitle: string;
+  ideaDescription: string;
+  linkedIdea?: string;
+}
 
 export default function AddIdea() {
   const [post, setPost] = useState({} as PostModel);
   const [hideLinkedIdea, setHideLinkedIdea] = useState<boolean>(true);
-
+  const [base64Image, setBase64Image] = useState("");
 
   const { register, setValue, handleSubmit } = useForm<AddIdeaData>();
 
+  const onPost = async (data: AddIdeaData) => {
+    const requestBody = {
+      author: data.username,
+      title: data.ideaTitle,
+      description: data.ideaDescription,
+      thumbnail: base64Image,
+      diagram: {},
+    };
+
+    // Send the POST request
+    const response = await fetch(
+      "https://concepts-service-n5ey5.ondigitalocean.app/concepts/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    if (!response.ok) {
+      console.log("failed to create post");
+      return;
+    }
+
+    // Handle the response
+    const responseData = await response.json();
+    console.log("Post created successfully:", responseData);
+  };
 
   const onPreview = (event: any) => {
     event.preventDefault();
@@ -44,7 +79,6 @@ export default function AddIdea() {
     setHideLinkedIdea(false);
     setValue("ideaTitle", `${idea} -- Copy`);
     setValue("linkedIdea", idea);
-
   };
 
   const router = useRouter();
@@ -57,10 +91,23 @@ export default function AddIdea() {
     return matches ? "2%" : "";
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Data = reader.result as string;
+        setBase64Image(base64Data);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
-    const search = router.asPath.split('?')[1];
+    const search = router.asPath.split("?")[1];
     const params = new URLSearchParams(search);
-    const idea = params.get('idea');    
+    const idea = params.get("idea");
     if (idea) {
       setExistingIdea(idea);
     }
@@ -81,7 +128,17 @@ export default function AddIdea() {
         <Typography variant="h3" sx={{ paddingLeft: 2, paddingTop: 2 }}>
           Add an Idea
         </Typography>
-        <form className={styles["add-idea-form"]} onSubmit={onPreview}>
+        <form
+          className={styles["add-idea-form"]}
+          onSubmit={handleSubmit(onPost)}
+        >
+          <TextField
+            label="Display Name"
+            variant="outlined"
+            helperText="Username"
+            sx={{ marginBottom: 1 }}
+            {...register("username")}
+          />
           <TextField
             label="Title"
             variant="outlined"
@@ -101,7 +158,13 @@ export default function AddIdea() {
           <div id="image-upload" style={{ marginBottom: 15 }}>
             <Button variant="contained" component="label">
               Upload
-              <input hidden accept="image/*" multiple type="file" />
+              <input
+                hidden
+                accept="image/*"
+                multiple
+                type="file"
+                onChange={handleImageUpload}
+              />
             </Button>
             <IconButton
               color="primary"
@@ -129,10 +192,12 @@ export default function AddIdea() {
               {...register("linkedIdea")}
             />
           )}
-          <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
+          {/* <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
             Preview
+          </Button> */}
+          <Button type="submit" variant="contained">
+            Add Idea
           </Button>
-          <Button variant="contained">Add Idea</Button>
         </form>
       </Paper>
     </div>
