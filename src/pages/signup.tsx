@@ -12,7 +12,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { signup, SignupData } from "@/data/signup-handler";
 import { useIsSmall } from "@/hooks/media-queries";
 
-
 type AlertInfo = {
   alert: AlertColor;
   message: String;
@@ -73,13 +72,6 @@ export default function SignUp() {
             {...register("displayName")}
           />
           <TextField
-            label="Email"
-            variant="outlined"
-            helperText="What you use to log in"
-            sx={{ marginBottom: 1 }}
-            {...register("email")}
-          ></TextField>
-          <TextField
             label="Password"
             variant="outlined"
             type="password"
@@ -88,17 +80,11 @@ export default function SignUp() {
             {...register("password")}
           ></TextField>
           {isLoading ? (
-            <LoadingButton
-              loading
-              variant="contained"
-            >
+            <LoadingButton loading variant="contained">
               <span>Sign Up</span>
             </LoadingButton>
           ) : (
-            <Button
-              variant="contained"
-              type="submit"
-            >
+            <Button variant="contained" type="submit">
               Sign Up
             </Button>
           )}

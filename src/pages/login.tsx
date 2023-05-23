@@ -10,13 +10,16 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import Link from "next/link";
-import { AuthData } from "@/data/auth-handler";
-import fetchAuthData from "@/data/auth-handler";
 
 type AlertInfo = {
   alert: AlertColor;
   message: String;
 };
+type AuthData = {
+  username: string;
+  password: string;
+};
+
 export default function Login() {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<AlertInfo>();
@@ -24,10 +27,39 @@ export default function Login() {
 
   const { register, handleSubmit } = useForm<AuthData>();
 
+  const handleLogin = async (username: string, password: string) => {
+    const data = {
+      display_name: Buffer.from(`${username}`).toString("base64"),
+      password: Buffer.from(`${password}`).toString("base64"),
+    };
+    const response = await fetch(
+      "https://accounts-service-fvmy8.ondigitalocean.app/accounts/authenticate",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (response.ok) {
+      // Login successful
+      const token = await response.json();
+      console.log("Login successful! Token:", token);
+      // Perform any additional actions after successful login
+    } else {
+      // Login failed
+      console.error("Login failed:", response.status);
+      throw new Error("Login failed");
+      // Handle login failure
+    }
+  };
+
   const onSubmit: SubmitHandler<AuthData> = async (data: AuthData) => {
     try {
       setLoading(true);
-      setJwt((await fetchAuthData(data)).sucess);
+      await handleLogin(data.username, data.password);
       setStatus({
         alert: "success",
         message: "Success. Redirecting you to your feed.",
@@ -66,10 +98,10 @@ export default function Login() {
           onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
-            label="Email"
+            label="Username"
             variant="outlined"
             sx={{ marginBottom: 2 }}
-            {...register("email")}
+            {...register("username")}
           ></TextField>
           <TextField
             label="Password"
