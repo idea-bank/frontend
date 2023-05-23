@@ -80,7 +80,7 @@ export default function Post(props: { idea: Idea }) {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="user">
-            I
+            {props.idea.author.charAt(0)}
           </Avatar>
         }
         action={<IconButton aria-label="settings"></IconButton>}
@@ -104,8 +104,8 @@ export default function Post(props: { idea: Idea }) {
       </Box>
 
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {props.idea.description + " " + props.idea.title}
+        <Typography variant="body2" color="text.primary">
+          {props.idea.description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
