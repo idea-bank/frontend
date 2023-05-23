@@ -9,20 +9,70 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { signup, SignupData } from "@/data/signup-handler";
 import Link from "next/link";
 
 type AlertInfo = {
   alert: AlertColor;
   message: String;
 };
-export default function Login() {
-  const [isLoading, setLoading] = useState(false);
-  const [status, setStatus] = useState<AlertInfo>();
-  const { register, handleSubmit } = useForm<SignupData>();
+type AuthData = {
+  username: string;
+  password: string;
+};
 
-  const onSubmit: SubmitHandler<SignupData> = async (data: SignupData) => {
-    // TODO: Implement login with backend API
+export default function Login() {
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<AlertInfo>();
+  const [jwt, setJwt] = useState<string>();
+
+  const { register, handleSubmit } = useForm<AuthData>();
+
+  const handleLogin = async (username: string, password: string) => {
+    const data = {
+      display_name: Buffer.from(`${username}`).toString("base64"),
+      password: Buffer.from(`${password}`).toString("base64"),
+    };
+    const response = await fetch(
+      "https://accounts-service-fvmy8.ondigitalocean.app/accounts/authenticate",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (response.ok) {
+      // Login successful
+      const token = await response.json();
+      console.log("Login successful! Token:", token);
+      // Perform any additional actions after successful login
+    } else {
+      // Login failed
+      console.error("Login failed:", response.status);
+      throw new Error("Login failed");
+      // Handle login failure
+    }
+  };
+
+  const onSubmit: SubmitHandler<AuthData> = async (data: AuthData) => {
+    try {
+      setLoading(true);
+      await handleLogin(data.username, data.password);
+      setStatus({
+        alert: "success",
+        message: "Success. Redirecting you to your feed.",
+      });
+    } catch (err) {
+      console.log(err);
+      setStatus({
+        alert: "error",
+        message: "Error. Invalid credentials received. Try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,10 +98,10 @@ export default function Login() {
           onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
-            label="Email"
+            label="Username"
             variant="outlined"
             sx={{ marginBottom: 2 }}
-            {...register("email")}
+            {...register("username")}
           ></TextField>
           <TextField
             label="Password"
@@ -61,21 +111,17 @@ export default function Login() {
             {...register("password")}
           ></TextField>
           {isLoading ? (
-            <LoadingButton
-              loading
-              variant="contained"
-            >
+            <LoadingButton loading variant="contained">
               <span>Log in</span>
             </LoadingButton>
           ) : (
-            <Button
-              variant="contained"
-              type="submit"
-            >
+            <Button variant="contained" type="submit">
               Log in
             </Button>
           )}
-         <Typography sx={{textAlign: "center", marginTop: 2}}>New to Idea Bank? <Link href="/signup">Create an Account</Link>.</Typography>
+          <Typography sx={{ textAlign: "center", marginTop: 2 }}>
+            New to Idea Bank? <Link href="/signup">Create an Account</Link>.
+          </Typography>
 
           {status ? (
             <Alert severity={status.alert} sx={{ marginTop: 1 }}>

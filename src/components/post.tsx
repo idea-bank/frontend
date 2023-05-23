@@ -1,5 +1,6 @@
-import { PostModel } from "@/models/PostModel";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+
 import LinkIcon from "@mui/icons-material/Link";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import Avatar from "@mui/material/Avatar";
@@ -10,12 +11,14 @@ import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
 import useWindowHeight from "@/hooks/window-height";
 import { useRouter } from "next/router";
 import { useIsSmall } from "@/hooks/media-queries";
+import ParkIcon from "@mui/icons-material/Park";
+import { Idea } from "@/data/idea-handler";
 
 const getImageHeight = (matches700: boolean, matches800: boolean) => {
   if (matches800) {
@@ -34,27 +37,29 @@ const getMarginBottom = (isMobile: boolean, height: number) => {
   return isMobile ? (height - 721) / 8 : 8;
 };
 
-function Post(props: { post: PostModel }) {
+export default function Post(props: { idea: Idea }) {
   const height = useWindowHeight();
-
-  const [randomNumber, setRandomNumber] = useState(0);
-
-  useEffect(() => {
-    setRandomNumber(Math.floor(Math.random() * 200) + 100);
-  }, []);
 
   const router = useRouter();
   const routeToDetailedView = () => {
-    router.push(`/idea/${props.post.post_id}`);
+    router.push(`/idea/${props.idea.author}/${props.idea.title}`);
   };
   const routeToLineage = () => {
-    router.push(`/idea/${props.post.post_id}/lineage`);
+    router.push(`/lineage/${props.idea.author}/${props.idea.title}`);
+  };
+  const routeToGraph = () => {
+    router.push(`/component-graph/${props.idea.author}/${props.idea.title}`);
   };
   const linkIdea = () => {
     router.push({
       pathname: "/add-idea",
-      query: { idea: props.post.title },
+      query: { idea: props.idea.title },
     });
+  };
+
+  const [liked, setLiked] = useState(false);
+  const likeIdea = () => {
+    setLiked(!liked);
   };
   const matches800 = useMediaQuery("(min-height: 800px)");
   const matches700 = useMediaQuery("(min-height: 700px)");
@@ -75,37 +80,53 @@ function Post(props: { post: PostModel }) {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="user">
-            I
+            {props.idea.author.charAt(0)}
           </Avatar>
         }
         action={<IconButton aria-label="settings"></IconButton>}
-        title={props.post.title}
-        subheader={`@${props.post.author_id}`}
+        title={props.idea.title}
+        subheader={`@${props.idea.author}`}
       />
-      <CardMedia
-        sx={{ maxHeight: getImageHeight(matches700, matches800) }}
-        component="img"
-        image={props.post.media_links}
-        onClick={routeToDetailedView}
-      />
+      <Box
+        sx={{
+          height: getImageHeight(matches700, matches800),
+          bgcolor: "rgb(248 250 252)",
+        }}
+      >
+        <CardMedia
+          sx={{
+            height: 1,
+          }}
+          component="img"
+          image={props.idea.image_url}
+          onClick={routeToDetailedView}
+        />
+      </Box>
+
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {props.post.description + " " + props.post.title}
+        <Typography variant="body2" color="text.primary">
+          {props.idea.description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="like">
-          <FavoriteBorderIcon />
+        <IconButton onClick={likeIdea}>
+          {liked ? (
+            <FavoriteIcon sx={{ color: "#e62723" }} />
+          ) : (
+            <FavoriteBorderIcon />
+          )}
         </IconButton>
+
         <IconButton aria-label="link" onClick={linkIdea}>
           <LinkIcon />
         </IconButton>
         <IconButton aria-label="tree" onClick={routeToLineage}>
+          <ParkIcon />
+        </IconButton>
+        <IconButton aria-label="graph" onClick={routeToGraph}>
           <AccountTreeIcon />
         </IconButton>
       </CardActions>
     </Card>
   );
 }
-
-export default Post;

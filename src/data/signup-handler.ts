@@ -1,27 +1,25 @@
 export interface SignupData {
   displayName: string;
-  email: string;
   password: string;
 }
+const API_URL = "https://accounts-service-fvmy8.ondigitalocean.app";
 
 export async function signup(formData: SignupData): Promise<boolean> {
-  const base64Credentials = Buffer.from(
-    `${formData.email}:${formData.password}`
-  ).toString("base64");
-  const requestBody = {
-    displayName: formData.displayName,
-    credentials: base64Credentials,
-  };
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_ROOT_URL}/users/web2/new`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    }
+  const base64Credentials = Buffer.from(`${formData.password}`).toString(
+    "base64"
   );
+  const displayName = Buffer.from(`${formData.displayName}`).toString("base64");
+  const requestBody = {
+    display_name: displayName,
+    password: base64Credentials,
+  };
+  const response = await fetch(`${API_URL}/accounts/create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  });
 
   if (response.ok) {
     return true;
