@@ -32,7 +32,7 @@ export default function AddIdea() {
       author: data.username,
       title: data.ideaTitle,
       description: data.ideaDescription,
-      thumbnail: base64Image,
+      thumbnail: base64Image.replace(/^data:image\/[a-z]+;base64,/, ""),
       diagram: {},
     };
 
