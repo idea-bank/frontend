@@ -186,7 +186,7 @@ const Lineage = () => {
       </Typography>
       <div
         id="treeWrapper"
-        style={{ width: "100vw", height: "100vh" }}
+        style={{ width: "100%", height: "100vh" }}
         ref={containerRef}
       >
         {loading ? (
