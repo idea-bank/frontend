@@ -13,8 +13,9 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { Alert, AlertColor } from "@mui/material";
+import { Alert, AlertColor, Box, Chip } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { text } from "stream/consumers";
 
 interface AddIdeaData {
   username: string;
@@ -49,7 +50,7 @@ export default function AddIdea() {
 
     try {
       const response = await fetch(
-        "https://7a2e7443-17af-48cc-83d0-cc4606e9b555.mock.pstmn.io/concepts/create",
+        "https://concepts-service-n5ey5.ondigitalocean.app/concepts/create",
         {
           method: "POST",
           headers: {
@@ -229,7 +230,16 @@ export default function AddIdea() {
             >
               <PhotoCamera />
             </IconButton>
-            <div>{fileName}</div>
+            {fileName !== "" && (
+              <Chip
+                label={fileName}
+                onDelete={() => {
+                  setFileName("");
+                  setBase64Image("");
+                }}
+                sx={{ marginLeft: 1 }}
+              />
+            )}
           </div>
           <FormControlLabel
             control={<Checkbox />}
