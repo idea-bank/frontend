@@ -31,7 +31,6 @@ type Part = {
 
 export default function ComponentGraph() {
   const graphContainerRef = useRef(null);
-  const [nodeClicked, setNodeClicked] = useState(0);
   const [graphData, setGraphData] = useState<Data>({} as Data);
   const isDesktop = useIsLarge();
 
@@ -187,9 +186,19 @@ export default function ComponentGraph() {
               sx={{ marginBottom: 1 }}
               {...register("child")}
             />
-            <Button variant="contained" type="submit">
-              Add Part
-            </Button>
+            <Box>
+              <Button variant="contained" sx={{ width: "75%" }} type="submit">
+                Add Part
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{ width: "20%", marginLeft: 1 }}
+                color="primary"
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+            </Box>
           </form>
         </Box>
       </Modal>
