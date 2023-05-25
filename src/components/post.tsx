@@ -53,7 +53,7 @@ export default function Post(props: { idea: Idea }) {
   const linkIdea = () => {
     router.push({
       pathname: "/add-idea",
-      query: { idea: props.idea.title },
+      query: { idea: `${props.idea.author}/${props.idea.title}` },
     });
   };
 

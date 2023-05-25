@@ -12,16 +12,104 @@ import styles from "../styles/add-idea.module.css";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { AddIdeaData } from "@/data/add-idea-handler";
 
+import { Alert, AlertColor, Box, Chip } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { text } from "stream/consumers";
 
+interface AddIdeaData {
+  username: string;
+  ideaTitle: string;
+  ideaDescription: string;
+  linkedIdea?: string;
+}
+type AlertInfo = {
+  alert: AlertColor;
+  message: String;
+};
 export default function AddIdea() {
   const [post, setPost] = useState({} as PostModel);
   const [hideLinkedIdea, setHideLinkedIdea] = useState<boolean>(true);
-
-
+  const [base64Image, setBase64Image] = useState("");
+  const [status, setStatus] = useState<AlertInfo>();
+  const [loading, setLoading] = useState<boolean>(false);
   const { register, setValue, handleSubmit } = useForm<AddIdeaData>();
+  const [fileName, setFileName] = useState<string>("");
 
+  const onPost = async (data: AddIdeaData) => {
+    setLoading(true);
+    const requestBody = {
+      author: data.username,
+      title: data.ideaTitle,
+      description: data.ideaDescription,
+      thumbnail: base64Image.replace(/^data:image\/[a-z]+;base64,/, ""),
+      diagram: {},
+    };
+
+    // Send the POST request
+
+    try {
+      const response = await fetch(
+        "https://concepts-service-n5ey5.ondigitalocean.app/concepts/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+      // Handle the response
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      if (data.linkedIdea) {
+        try {
+          const response2 = await fetch(
+            "https://concepts-service-n5ey5.ondigitalocean.app/concepts/link",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                ancestor: data.linkedIdea,
+                descendant: `${data.username}/${data.ideaTitle}`,
+              }),
+            }
+          );
+          const responseData2 = await response2.json();
+          if (!response2.ok) {
+            throw new Error();
+          }
+
+          setStatus({
+            alert: "success",
+            message: `Success. Post ${responseData.created.author}/${responseData.created.title} has been created and linked successfully.`,
+          });
+        } catch (error: any) {
+          setStatus({
+            alert: "error",
+            message: "Failed to Link Idea",
+          });
+        }
+      } else {
+        setStatus({
+          alert: "success",
+          message: `Success. Post ${responseData.created.author}/${responseData.created.title} has been created.`,
+        });
+      }
+    } catch (error: any) {
+      setStatus({
+        alert: "error",
+        message: "Failed to Post Idea",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onPreview = (event: any) => {
     event.preventDefault();
@@ -42,9 +130,8 @@ export default function AddIdea() {
   };
   const setExistingIdea = (idea: string) => {
     setHideLinkedIdea(false);
-    setValue("ideaTitle", `${idea} -- Copy`);
+    setValue("ideaTitle", idea.split("/")[1]);
     setValue("linkedIdea", idea);
-
   };
 
   const router = useRouter();
@@ -57,10 +144,24 @@ export default function AddIdea() {
     return matches ? "2%" : "";
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      setFileName(file.name);
+      reader.onloadend = () => {
+        const base64Data = reader.result as string;
+        setBase64Image(base64Data);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
-    const search = router.asPath.split('?')[1];
+    const search = router.asPath.split("?")[1];
     const params = new URLSearchParams(search);
-    const idea = params.get('idea');    
+    const idea = params.get("idea");
     if (idea) {
       setExistingIdea(idea);
     }
@@ -81,7 +182,17 @@ export default function AddIdea() {
         <Typography variant="h3" sx={{ paddingLeft: 2, paddingTop: 2 }}>
           Add an Idea
         </Typography>
-        <form className={styles["add-idea-form"]} onSubmit={onPreview}>
+        <form
+          className={styles["add-idea-form"]}
+          onSubmit={handleSubmit(onPost)}
+        >
+          <TextField
+            label="Display Name"
+            variant="outlined"
+            helperText="Username"
+            sx={{ marginBottom: 1 }}
+            {...register("username")}
+          />
           <TextField
             label="Title"
             variant="outlined"
@@ -98,10 +209,19 @@ export default function AddIdea() {
             {...register("ideaDescription")}
           ></TextField>
 
-          <div id="image-upload" style={{ marginBottom: 15 }}>
+          <div
+            id="image-upload"
+            style={{ marginBottom: 15, display: "flex", alignItems: "center" }}
+          >
             <Button variant="contained" component="label">
               Upload
-              <input hidden accept="image/*" multiple type="file" />
+              <input
+                hidden
+                accept="image/*"
+                multiple
+                type="file"
+                onChange={handleImageUpload}
+              />
             </Button>
             <IconButton
               color="primary"
@@ -110,6 +230,16 @@ export default function AddIdea() {
             >
               <PhotoCamera />
             </IconButton>
+            {fileName !== "" && (
+              <Chip
+                label={fileName}
+                onDelete={() => {
+                  setFileName("");
+                  setBase64Image("");
+                }}
+                sx={{ marginLeft: 1 }}
+              />
+            )}
           </div>
           <FormControlLabel
             control={<Checkbox />}
@@ -129,10 +259,25 @@ export default function AddIdea() {
               {...register("linkedIdea")}
             />
           )}
-          <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
+          {/* <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
             Preview
-          </Button>
-          <Button variant="contained">Add Idea</Button>
+          </Button> */}
+          {loading ? (
+            <LoadingButton loading variant="contained">
+              <span>Add Idea</span>
+            </LoadingButton>
+          ) : (
+            <Button variant="contained" type="submit">
+              Add Idea
+            </Button>
+          )}
+          {status ? (
+            <Alert severity={status.alert} sx={{ marginTop: 1 }}>
+              {status.message}
+            </Alert>
+          ) : (
+            <></>
+          )}
         </form>
       </Paper>
     </div>

@@ -94,34 +94,49 @@ const Lineage = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const addImageUrlToNode = async (treePointer: TreeData): Promise<void> => {
-    if (treePointer.children !== undefined) {
-      for (const child of treePointer.children) {
-        addImageUrlToNode(child);
+  const addImageUrlToNode = (treePointer): Promise<void>[] => {
+    const stack = [treePointer]; // Create a stack to store nodes to be processed
+    const promises: Promise<void>[] = []; // Create an array to store fetch promises
+
+    while (stack.length > 0) {
+      const currentNode = stack.pop(); // Get the next node from the stack
+
+      if (currentNode.name) {
+        const promise = new Promise<void>((resolve, reject) => {
+          fetch(
+            `https://concepts-service-n5ey5.ondigitalocean.app/concepts/${currentNode.name}`
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              setTreeData((prevTreeData) => {
+                const updatedTreeData = { ...prevTreeData };
+                const nodeToUpdate = findNode(
+                  updatedTreeData,
+                  currentNode.name
+                );
+                if (nodeToUpdate) {
+                  nodeToUpdate.imageUrl = data.items[0].image_url;
+                }
+                return updatedTreeData;
+              });
+              resolve();
+            })
+            .catch(reject);
+        });
+
+        promises.push(promise);
+      }
+
+      if (currentNode.children) {
+        // Add children to the stack in reverse order to process them in the correct order
+        for (let i = currentNode.children.length - 1; i >= 0; i--) {
+          stack.push(currentNode.children[i]);
+        }
       }
     }
 
-    if (treePointer.name) {
-      return new Promise<void>((resolve, reject) => {
-        fetch(
-          `https://concepts-service-n5ey5.ondigitalocean.app/concepts/${treePointer.name}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            setTreeData((prevTreeData) => {
-              const updatedTreeData = { ...prevTreeData }; // Create a copy of the previous treeData
-              const nodeToUpdate = findNode(updatedTreeData, treePointer.name); // Find the node to update in the copied treeData
-              if (nodeToUpdate) {
-                nodeToUpdate.imageUrl = data.items[0].image_url; // Set the imageUrl
-              }
-              return updatedTreeData; // Return the updated treeData
-            });
-            resolve();
-          });
-      });
-    }
+    return promises; // Wait for all fetch requests to complete
   };
-
   const findNode = (node: TreeData, name: string): TreeData | undefined => {
     if (node.name === name) {
       return node;
@@ -138,7 +153,6 @@ const Lineage = () => {
   };
 
   const fetchLineage = async () => {
-    setLoading(true);
     const id = window.location.href.split("/lineage/")[1].split("/");
     try {
       fetch(
@@ -148,8 +162,8 @@ const Lineage = () => {
         .then(async (data: LineageResponse) => {
           const treeData = mapLineageToTreeData(data.lineage);
           setTreeData(treeData);
-          await addImageUrlToNode(treeData);
-          setLoading(false);
+          const waitForImages = addImageUrlToNode(treeData);
+          Promise.all(waitForImages).then(() => setLoading(false));
         });
     } catch (error) {
       console.error(error);
