@@ -48,7 +48,7 @@ export default function Post(props: { idea: Idea }) {
     router.push(`/lineage/${props.idea.author}/${props.idea.title}`);
   };
   const routeToGraph = () => {
-    router.push(`/component-graph/${props.idea.author}/${props.idea.title}`);
+    router.push(`/graph/${props.idea.author}/${props.idea.title}`);
   };
   const linkIdea = () => {
     router.push({
