@@ -12,28 +12,6 @@ import TextField from "@mui/material/TextField";
 import { useForm } from "react-hook-form";
 import Button from "@mui/material/Button";
 
-function createGraph(container, graphData: Data) {
-  const options: Options = {
-    physics: false,
-    interaction: {
-      dragNodes: false,
-    },
-    layout: {
-      randomSeed: 1,
-    },
-    nodes: {
-      color: "#b0b0b0",
-      shape: "circle",
-      font: {
-        color: "#ffffff",
-      },
-    },
-  };
-
-  const network = new Network(container, graphData, options);
-  return network;
-}
-
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -53,11 +31,47 @@ type Part = {
 
 export default function ComponentGraph() {
   const graphContainerRef = useRef(null);
+  const [nodeClicked, setNodeClicked] = useState(0);
   const [graphData, setGraphData] = useState<Data>({} as Data);
   const isDesktop = useIsLarge();
 
   const { register, setValue, handleSubmit } = useForm<Part>();
 
+  function createGraph(container, graphData: Data) {
+    const options: Options = {
+      physics: false,
+      interaction: {
+        dragNodes: false,
+      },
+      layout: {
+        randomSeed: 1,
+      },
+      nodes: {
+        color: "#b0b0b0",
+        shape: "circle",
+        font: {
+          color: "#ffffff",
+        },
+      },
+    };
+
+    const network = new Network(container, graphData, options);
+    network.on("selectNode", function (event) {
+      if (Array.isArray(graphData.nodes)) {
+        try {
+          const index = graphData.nodes.findIndex(
+            (node) => node.id === event.nodes[0]
+          );
+          if (index !== -1) {
+            setValue("parent", graphData.nodes[index].label!);
+          }
+        } catch {
+          console.log("Out of bounds");
+        }
+      }
+    });
+    return network;
+  }
   const fetchGraphData = async () => {
     const id = window.location.href.split("/graph/")[1].split("/");
     try {
@@ -73,7 +87,6 @@ export default function ComponentGraph() {
             edges: [],
           });
         }
-        console.log();
       } else {
         throw new Error(
           `Failed to submit form data. Status code: ${response.status}`
@@ -130,6 +143,8 @@ export default function ComponentGraph() {
     }
 
     handleClose();
+    setValue("parent", "");
+    setValue("child", "");
   };
 
   const [open, setOpen] = useState(false);
