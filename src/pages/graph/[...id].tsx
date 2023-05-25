@@ -151,6 +151,13 @@ export default function ComponentGraph() {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Add Component
             </Typography>
+            <Typography
+              id="modal-modal-description"
+              paragraph={true}
+              color="text.secondary"
+            >
+              Leave parent empty when adding standalone component
+            </Typography>
             <TextField
               label="Parent Part"
               variant="outlined"
