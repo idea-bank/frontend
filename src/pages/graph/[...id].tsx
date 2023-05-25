@@ -67,7 +67,13 @@ export default function ComponentGraph() {
       if (response.ok) {
         const data = await response.json();
         setGraphData(data.items[0].diagram);
-        console.log(data.items[0].diagram);
+        if (Object.keys(data.items[0].diagram).length === 0) {
+          setGraphData({
+            nodes: [],
+            edges: [],
+          });
+        }
+        console.log();
       } else {
         throw new Error(
           `Failed to submit form data. Status code: ${response.status}`
@@ -91,25 +97,38 @@ export default function ComponentGraph() {
   };
 
   const addPart = (data: Part) => {
-    setGraphData(() => {
-      const newGraphData = { ...graphData };
-      if (
-        Array.isArray(newGraphData.nodes) &&
-        Array.isArray(newGraphData.edges)
-      ) {
-        console.log(newGraphData);
-        const newId = newGraphData.nodes.length + 1;
-        const parentId =
-          newGraphData.nodes.findIndex((node) => node.label === data.parent) +
-          1;
-        if (parentId === -1) {
-          return newGraphData;
+    if (data.parent === "" && data.child === "") {
+    } else if (data.parent === "") {
+      setGraphData(() => {
+        const newGraphData = { ...graphData };
+        if (Array.isArray(newGraphData.nodes)) {
+          const newId = newGraphData.nodes.length + 1;
+
+          newGraphData.nodes.push({ id: newId, label: data.child });
         }
-        newGraphData.nodes.push({ id: newId, label: data.child });
-        newGraphData.edges.push({ from: parentId, to: newId });
-      }
-      return newGraphData;
-    });
+        return newGraphData;
+      });
+    } else {
+      setGraphData(() => {
+        const newGraphData = { ...graphData };
+        if (
+          Array.isArray(newGraphData.nodes) &&
+          Array.isArray(newGraphData.edges)
+        ) {
+          const newId = newGraphData.nodes.length + 1;
+          const parentId =
+            newGraphData.nodes.findIndex((node) => node.label === data.parent) +
+            1;
+          if (parentId === -1) {
+            return newGraphData;
+          }
+          newGraphData.nodes.push({ id: newId, label: data.child });
+          newGraphData.edges.push({ from: parentId, to: newId });
+        }
+        return newGraphData;
+      });
+    }
+
     handleClose();
   };
 
@@ -155,10 +174,17 @@ export default function ComponentGraph() {
       <Typography variant="h3" sx={{ marginLeft: 2, paddingTop: 2 }}>
         Components
       </Typography>
-      <div
-        ref={graphContainerRef}
-        style={{ flex: 1, height: "100%", overflow: "auto" }}
-      ></div>
+      {graphData.nodes && graphData.nodes.length === 0 ? (
+        <Typography variant="h5" sx={{ marginLeft: 2, paddingTop: 2 }}>
+          No components yet. Click the Add button in the bottom right to get
+          started.
+        </Typography>
+      ) : (
+        <div
+          ref={graphContainerRef}
+          style={{ flex: 1, height: "100%", overflow: "auto" }}
+        ></div>
+      )}
       <Fab
         color="primary"
         aria-label="add"
