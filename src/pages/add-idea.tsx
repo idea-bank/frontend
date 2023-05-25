@@ -13,21 +13,29 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import { Alert, AlertColor } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+
 interface AddIdeaData {
   username: string;
   ideaTitle: string;
   ideaDescription: string;
   linkedIdea?: string;
 }
-
+type AlertInfo = {
+  alert: AlertColor;
+  message: String;
+};
 export default function AddIdea() {
   const [post, setPost] = useState({} as PostModel);
   const [hideLinkedIdea, setHideLinkedIdea] = useState<boolean>(true);
   const [base64Image, setBase64Image] = useState("");
-
+  const [status, setStatus] = useState<AlertInfo>();
+  const [loading, setLoading] = useState<boolean>(false);
   const { register, setValue, handleSubmit } = useForm<AddIdeaData>();
 
   const onPost = async (data: AddIdeaData) => {
+    setLoading(true);
     const requestBody = {
       author: data.username,
       title: data.ideaTitle,
@@ -37,25 +45,68 @@ export default function AddIdea() {
     };
 
     // Send the POST request
-    const response = await fetch(
-      "https://concepts-service-n5ey5.ondigitalocean.app/concepts/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
+
+    try {
+      const response = await fetch(
+        "https://7a2e7443-17af-48cc-83d0-cc4606e9b555.mock.pstmn.io/concepts/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+      // Handle the response
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error();
       }
-    );
 
-    if (!response.ok) {
-      console.log("failed to create post");
-      return;
+      if (data.linkedIdea) {
+        try {
+          const response2 = await fetch(
+            "https://concepts-service-n5ey5.ondigitalocean.app/concepts/link",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                ancestor: data.linkedIdea,
+                descendant: `${data.username}/${data.ideaTitle}`,
+              }),
+            }
+          );
+          const responseData2 = await response2.json();
+          if (!response2.ok) {
+            throw new Error();
+          }
+
+          setStatus({
+            alert: "success",
+            message: `Success. Post ${responseData.created.author}/${responseData.created.title} has been created and linked successfully.`,
+          });
+        } catch (error: any) {
+          setStatus({
+            alert: "error",
+            message: "Failed to Link Idea",
+          });
+        }
+      } else {
+        setStatus({
+          alert: "success",
+          message: `Success. Post ${responseData.created.author}/${responseData.created.title} has been created.`,
+        });
+      }
+    } catch (error: any) {
+      setStatus({
+        alert: "error",
+        message: "Failed to Post Idea",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    // Handle the response
-    const responseData = await response.json();
-    console.log("Post created successfully:", responseData);
   };
 
   const onPreview = (event: any) => {
@@ -77,7 +128,7 @@ export default function AddIdea() {
   };
   const setExistingIdea = (idea: string) => {
     setHideLinkedIdea(false);
-    setValue("ideaTitle", `${idea} -- Copy`);
+    setValue("ideaTitle", idea.split("/")[1]);
     setValue("linkedIdea", idea);
   };
 
@@ -195,9 +246,22 @@ export default function AddIdea() {
           {/* <Button variant="outlined" type="submit" sx={{ marginBottom: 1 }}>
             Preview
           </Button> */}
-          <Button type="submit" variant="contained">
-            Add Idea
-          </Button>
+          {loading ? (
+            <LoadingButton loading variant="contained">
+              <span>Add Idea</span>
+            </LoadingButton>
+          ) : (
+            <Button variant="contained" type="submit">
+              Add Idea
+            </Button>
+          )}
+          {status ? (
+            <Alert severity={status.alert} sx={{ marginTop: 1 }}>
+              {status.message}
+            </Alert>
+          ) : (
+            <></>
+          )}
         </form>
       </Paper>
     </div>
