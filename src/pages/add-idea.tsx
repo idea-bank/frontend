@@ -33,6 +33,7 @@ export default function AddIdea() {
   const [status, setStatus] = useState<AlertInfo>();
   const [loading, setLoading] = useState<boolean>(false);
   const { register, setValue, handleSubmit } = useForm<AddIdeaData>();
+  const [fileName, setFileName] = useState<string>("");
 
   const onPost = async (data: AddIdeaData) => {
     setLoading(true);
@@ -147,6 +148,7 @@ export default function AddIdea() {
 
     if (file) {
       const reader = new FileReader();
+      setFileName(file.name);
       reader.onloadend = () => {
         const base64Data = reader.result as string;
         setBase64Image(base64Data);
@@ -206,7 +208,10 @@ export default function AddIdea() {
             {...register("ideaDescription")}
           ></TextField>
 
-          <div id="image-upload" style={{ marginBottom: 15 }}>
+          <div
+            id="image-upload"
+            style={{ marginBottom: 15, display: "flex", alignItems: "center" }}
+          >
             <Button variant="contained" component="label">
               Upload
               <input
@@ -224,6 +229,7 @@ export default function AddIdea() {
             >
               <PhotoCamera />
             </IconButton>
+            <div>{fileName}</div>
           </div>
           <FormControlLabel
             control={<Checkbox />}
