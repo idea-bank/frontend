@@ -15,7 +15,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Alert, AlertColor, Box, Chip } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { text } from "stream/consumers";
 
 interface AddIdeaData {
   username: string;

@@ -38,11 +38,19 @@ const renderMaterialCardNode = ({
   nodeDatum,
   onNodeClick,
   foreignObjectProps,
+  id,
 }) => (
   <g transform={`translate(${-120},${-225})`} onClick={onNodeClick}>
     {/* `foreignObject` requires width & height to be explicitly set. */}
     <foreignObject {...foreignObjectProps}>
-      <Card sx={{ border: 1, bgcolor: "#f3f3f3" }}>
+      <Card
+        sx={{
+          border: 2,
+          bgcolor: "#f1f1f1",
+          borderColor:
+            nodeDatum.name === `${id[0]}/${id[1]}` ? "#fc6805" : "black",
+        }}
+      >
         <CardHeader
           titleTypographyProps={{
             fontSize: 16,
@@ -51,7 +59,7 @@ const renderMaterialCardNode = ({
           title={nodeDatum.name}
         ></CardHeader>
         <CardMedia
-          sx={{ height: 200, width: 200, objectFit: "fill" }}
+          sx={{ height: 200, width: 200, objectFit: "fill", borderRadius: 0.5 }}
           component="img"
           image={nodeDatum.imageUrl}
         />
@@ -154,6 +162,7 @@ const Lineage = () => {
 
   const fetchLineage = async () => {
     const id = window.location.href.split("/lineage/")[1].split("/");
+    setId(id);
     try {
       fetch(
         `https://concepts-service-n5ey5.ondigitalocean.app/concepts/${id[0]}/${id[1]}/lineage`
@@ -177,6 +186,7 @@ const Lineage = () => {
   const [dimensions, translate, containerRef] = useCenteredTree();
   const nodeSize = { x: 200, y: 300 };
   const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x: 20 };
+  const [id, setId] = useState<String[]>([]);
   const router = useRouter();
   /* node.data.name */
   return (
@@ -186,7 +196,7 @@ const Lineage = () => {
       </Typography>
       <div
         id="treeWrapper"
-        style={{ width: "100vw", height: "100vh" }}
+        style={{ width: "100%", height: "100vh" }}
         ref={containerRef}
       >
         {loading ? (
@@ -211,7 +221,7 @@ const Lineage = () => {
             zoom={0.7}
             separation={{ siblings: 2, nonSiblings: 2 }}
             renderCustomNodeElement={(rd3tProps) =>
-              renderMaterialCardNode({ ...rd3tProps, foreignObjectProps })
+              renderMaterialCardNode({ ...rd3tProps, foreignObjectProps, id })
             }
             onNodeClick={(node) => router.push(`/idea/${node.data.name}`)}
           />

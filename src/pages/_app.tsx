@@ -23,8 +23,12 @@ export default function App({ Component, pageProps }: AppProps) {
     return 0;
   };
   return (
-    <Box sx={{ paddingLeft: getLeftPadding() }}>
-      <Component {...pageProps} />
+    <Box sx={{}}>
+      <Box
+        sx={{ paddingLeft: getLeftPadding(), width: "auto", height: "100vh" }}
+      >
+        <Component {...pageProps} />
+      </Box>
       <Navbar />
     </Box>
   );
