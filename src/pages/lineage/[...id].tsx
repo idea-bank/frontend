@@ -48,7 +48,10 @@ const renderMaterialCardNode = ({
           border: 2,
           bgcolor: "#f1f1f1",
           borderColor:
-            nodeDatum.name === `${id[0]}/${id[1]}` ? "#fc6805" : "black",
+            nodeDatum.name ===
+            `${decodeURIComponent(id[0])}/${decodeURIComponent(id[1])}`
+              ? "#fc6805"
+              : "black",
         }}
       >
         <CardHeader
