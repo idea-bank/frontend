@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useIsSmall } from "@/hooks/media-queries";
 import ParkIcon from "@mui/icons-material/Park";
 import { Idea } from "@/data/idea-handler";
+import Link from "next/link";
 
 const getImageHeight = (matches700: boolean, matches800: boolean) => {
   if (matches800) {
@@ -95,9 +96,15 @@ export default function Post(props: { idea: Idea }) {
             {props.idea.author.charAt(0)}
           </Avatar>
         }
-        action={<IconButton aria-label="settings"></IconButton>}
         title={props.idea.title}
-        subheader={`@${props.idea.author}`}
+        subheader={
+          <Link
+            href={`/profile/${props.idea.author}`}
+            style={{ textDecoration: "none", color: "gray" }}
+          >
+            @{`${props.idea.author}`}
+          </Link>
+        }
       />
       <Box
         sx={{
