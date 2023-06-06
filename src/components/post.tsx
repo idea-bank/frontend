@@ -127,7 +127,7 @@ export default function Post(props: { idea: Idea }) {
         </Typography>
       </CardActions>
       <CardContent sx={{ paddingY: 0 }}>
-        <Typography variant="body2" color="text.primary">
+        <Typography variant="body1" color="text.primary">
           {props.idea.description}
         </Typography>
       </CardContent>
