@@ -8,15 +8,10 @@ import ImageListItem from "@mui/material/ImageListItem";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { deepOrange } from "@mui/material/colors";
 
-/* 
-  [Delete]
-  Updated this page to use dynamic routing
-  /profile/Jackson is an example of a valid route and /profile is no longer valid
-  Extract username from query with useRouter() done below
-  https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes
-*/
-
+const url = "https://accounts-service-fvmy8.ondigitalocean.app";
+const conceptsUrl = "https://concepts-service-n5ey5.ondigitalocean.app";
 interface Profile {
   preferred_name: string;
   biography: string;
@@ -44,29 +39,41 @@ interface ConceptsResponse extends BaseResponse {
   items: Concept[];
 }
 
-// https://nextjs.org/docs/pages/building-your-application/data-fetching/client-side
-export default function Profile(username: string) {
+export default function Profile() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const [profile, setProfile] = useState<Profile>();
+  const [profile, setProfile] = useState<Profile>({} as Profile);
   const [thumbnails, setThumbnails] = useState<Concept[]>();
+  const [connected, setConnected] = useState(false);
 
-  const fetchProfileData = (username: string) => {
-    // TODO: Implement data fetching
-    // Fetch from profile endpoint
-    // Fetch from concepts for title and thumbnails
+  const fetchProfileData = async (username: string) => {
+    const profileResponse = await fetch(`${url}/accounts/${username}/profile`);
+    if (profileResponse.status !== 200) {
+      console.log("Error fetching profile data");
+      setIsLoading(false);
+      return;
+    }
+    const profileData: ProfileReponse = await profileResponse.json();
+    setProfile(profileData.info);
+
+    const conceptsResponse = await fetch(`${conceptsUrl}/concepts/${username}`);
+    if (conceptsResponse.status !== 200) {
+      console.log("Error fetching concepts data");
+    }
+    const conceptsData: ConceptsResponse = await conceptsResponse.json();
+    setThumbnails(conceptsData.items);
     setIsLoading(false);
   };
 
   useEffect(() => {
     // Extracted username from the route
+
     const user = router.query.id;
-    fetchProfileData(user as string);
-  }, []);
+    if (user) fetchProfileData(user as string);
+  }, [router]);
 
   if (isLoading) return <p>Loading...</p>;
 
-  // TODO: Integrate data with profile and thumbnails state
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
       <Box sx={{ maxWidth: 600 }}>
@@ -86,23 +93,42 @@ export default function Profile(username: string) {
               paddingBottom: 2,
             }}
           >
-            <Avatar alt="Profile Image" src="" sx={{ width: 60, height: 60 }}>
-              J
+            <Avatar
+              alt="Profile Image"
+              src=""
+              sx={{ width: 60, height: 60, bgcolor: deepOrange[500] }}
+            >
+              {profile.preferred_name[0]}
             </Avatar>
-            <Typography variant="h5" gutterBottom>
-              @jdoe
-              {/* {profile.data} */}
-            </Typography>
-            <Button variant="contained" sx={{ marginLeft: "auto" }}>
-              Connect
-            </Button>
+            <Typography variant="h5" gutterBottom></Typography>
+            {connected ? (
+              <Button
+                variant="outlined"
+                sx={{ marginLeft: "auto" }}
+                onClick={() => {
+                  setConnected(false);
+                }}
+              >
+                Connected
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{ marginLeft: "auto" }}
+                onClick={() => {
+                  setConnected(true);
+                }}
+              >
+                Connect
+              </Button>
+            )}
           </Box>
 
           <Box sx={{}}>
             <Typography>
-              <b>John Doe</b>
+              <b> {profile.preferred_name} </b>
             </Typography>
-            <Typography gutterBottom>Idea Developer</Typography>
+            <Typography gutterBottom>{profile.biography}</Typography>
           </Box>
         </Box>
 
@@ -118,12 +144,12 @@ export default function Profile(username: string) {
           <Typography>
             <b>Ideas</b>
             <br />
-            25
+            {thumbnails?.length}
           </Typography>
           <Typography>
             <b>Connections</b>
             <br />
-            500
+            34
           </Typography>
         </Box>
 
@@ -131,14 +157,14 @@ export default function Profile(username: string) {
           sx={{ maxWidth: 600, marginTop: 0, marginBottom: 7, gap: 3 / 8 }}
           cols={3}
         >
-          {PROFILE_DATA.map((item) => (
-            <ImageListItem key={item.post_id}>
+          {thumbnails!.map((item, index) => (
+            <ImageListItem key={index}>
               <img
-                src={`${item.media_links}`}
-                style={{}}
+                src={`${item.image_url}`}
+                style={{ border: "1px solid #D3D3D3" }}
                 loading="lazy"
                 onClick={() => {
-                  router.push("/idea/Jackson/Skateboard");
+                  router.push(`/idea/${item.author}/${item.title}`);
                 }}
               />
             </ImageListItem>
