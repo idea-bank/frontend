@@ -38,6 +38,7 @@ const getMarginBottom = (isMobile: boolean, height: number) => {
 };
 
 export default function Post(props: { idea: Idea }) {
+  const [likes, setLikes] = useState<number>(0);
   const height = useWindowHeight();
 
   const router = useRouter();
@@ -60,10 +61,21 @@ export default function Post(props: { idea: Idea }) {
   const [liked, setLiked] = useState(false);
   const likeIdea = () => {
     setLiked(!liked);
+    if (liked) {
+      setLikes(likes - 1);
+    }
+    if (!liked) {
+      setLikes(likes + 1);
+    }
   };
   const matches800 = useMediaQuery("(min-height: 800px)");
   const matches700 = useMediaQuery("(min-height: 700px)");
   const isMobile = useIsSmall();
+
+  useEffect(() => {
+    // Generate random number for likes
+    setLikes(Math.floor(Math.random() * 100));
+  }, []);
 
   const postStyle = () => {
     return isMobile
@@ -102,13 +114,7 @@ export default function Post(props: { idea: Idea }) {
           onClick={routeToDetailedView}
         />
       </Box>
-
-      <CardContent>
-        <Typography variant="body2" color="text.primary">
-          {props.idea.description}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
+      <CardActions>
         <IconButton onClick={likeIdea}>
           {liked ? (
             <FavoriteIcon sx={{ color: "#e62723" }} />
@@ -116,7 +122,16 @@ export default function Post(props: { idea: Idea }) {
             <FavoriteBorderIcon />
           )}
         </IconButton>
-
+        <Typography variant="body1" color="text.primary">
+          {likes}
+        </Typography>
+      </CardActions>
+      <CardContent sx={{ paddingY: 0 }}>
+        <Typography variant="body2" color="text.primary">
+          {props.idea.description}
+        </Typography>
+      </CardContent>
+      <CardActions disableSpacing>
         <IconButton aria-label="link" onClick={linkIdea}>
           <LinkIcon />
         </IconButton>
