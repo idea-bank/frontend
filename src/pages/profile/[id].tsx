@@ -17,6 +17,8 @@ import { useRouter } from "next/router";
   https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes
 */
 
+const url = 'https://accounts-service-fvmy8.ondigitalocean.app';
+
 interface Profile {
   preferred_name: string;
   biography: string;
@@ -55,6 +57,31 @@ export default function Profile(username: string) {
     // TODO: Implement data fetching
     // Fetch from profile endpoint
     // Fetch from concepts for title and thumbnails
+    // There isn't a clean way to do ^^^ in v1.
+    setProfile(fetch(
+        `${url}/accounts/${username}/profile`
+    ).then(response => {
+        if (response.ok) {
+            response.json().then(body =>{
+                console.log(body);
+                return {
+                    preferred_name: body.info.preferred_name,
+                    biography: body.info.biography,
+                    avatar_url: body.info.avatar_url
+                };
+            })
+        }
+        else {
+            console.log("Default");
+            return {
+                preferred_name: "???",
+                biography: "Somebody that I used to know...",
+                avatar_url: ""
+            };
+        }
+    })
+    
+    );
     setIsLoading(false);
   };
 
@@ -90,8 +117,6 @@ export default function Profile(username: string) {
               J
             </Avatar>
             <Typography variant="h5" gutterBottom>
-              @jdoe
-              {/* {profile.data} */}
             </Typography>
             <Button variant="contained" sx={{ marginLeft: "auto" }}>
               Connect
@@ -100,7 +125,7 @@ export default function Profile(username: string) {
 
           <Box sx={{}}>
             <Typography>
-              <b>John Doe</b>
+              <b> { profile.preferred_name } </b>
             </Typography>
             <Typography gutterBottom>Idea Developer</Typography>
           </Box>
