@@ -1,39 +1,47 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## About
 
-First, run the development server:
+This is the frontend web application for the ideabank project. It provides a responsive webview for the data it retrieves from the [ideabank-webapi](https://github.com/idea-bank/ideabank-webapi). It can also provide new data to that same API. The application is written in typescript using the [nextjs](https://nextjs.org) framework.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+## Getting started
+
+### Local setup
+
+First, install the dependencies
+
+```shell
+$ npm install .
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Second, start the development server
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```shell
+$ npm run dev
+# or
+$ yarn dev
+# or
+$ pnpm dev
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Then, visit the local URL. Should be `http://localhost:3000` if using default settings
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Containerized
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+A `Dockerfile` is provided to set up a local server in a docker container. This can be used for deployment elsewhere, but is not recommended to attain real-time development
 
-## Learn More
+Build the image like so.
 
-To learn more about Next.js, take a look at the following resources:
+```shell
+$ docker build . -t webapp
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Launch a container with
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```shell
+docker run -p 3000:3000 --name webapp --rm webapp
+```
 
-## Deploy on Vercel
+**You can retain the container after shutdown by withholding the `--rm` although this isn't likely useful during actual development**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-Test
+## Contributors
