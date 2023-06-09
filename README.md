@@ -45,3 +45,7 @@ docker run -p 3000:3000 --name webapp --rm webapp
 **You can retain the container after shutdown by withholding the `--rm` although this isn't likely useful during actual development**
 
 ## Contributors
+
+- Matthew Isayan
+- Jeewanjyot Dhanjal
+- Nathan Mendoza (nathancm@uci.edu)
