@@ -5,7 +5,9 @@ This document will highlight some of the key features and documentation complete
 This project was made in Next.js 12 using Typescript and the page router.
 Most UI elements were implemented using React MUI 5.
 
-This app will no longer be functional due to the backend API being delisted.
+This app will no longer be functional due to the backend API being delisted. This app was hosted on Vercel and will be taken down due to the 
+previous reasoning.
+
 Refer to Figma for visuals
 
 ## Features
