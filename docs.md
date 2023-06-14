@@ -13,6 +13,9 @@ Refer to Figma for visuals
 ## Features
 ### Scrollable Feed
 [/pages/feed.tsx](https://github.com/idea-bank/frontend-web-app/blob/main/src/pages/feed.tsx)
+
+Social Media like feed filled with ideas.
+- Ideas contain an image, likes, title, description and author
 - Infinitely scrollable implemented using the Intersection Observer API
 - Snap to scroll (mobile)
 
