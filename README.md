@@ -46,6 +46,6 @@ docker run -p 3000:3000 --name webapp --rm webapp
 
 ## Contributors
 
-- Matthew Isayan
+- Matthew Isayan (misayan@gmail.com)
 - Jeewanjyot Dhanjal
 - Nathan Mendoza (nathancm@uci.edu)
