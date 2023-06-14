@@ -1,5 +1,5 @@
 # Final Frontend Documentation
-This document will highlight some of the key features and documentation completed by Team Idea Bank.
+This document will highlight some of the key features and documentation completed by Team Idea Bank as of 6/13/2023.
 
 ## Project 
 This project was made in Next.js 12 using Typescript and the page router.
